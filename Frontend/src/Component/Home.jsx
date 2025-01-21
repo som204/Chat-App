@@ -5,13 +5,18 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { UserContext } from "../Context/user.context";
+//import { Cookie } from "@mui/icons-material";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  if(!user){
-    navigate("/login");
-  }
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!user && !token) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -64,7 +69,8 @@ const Home = () => {
         setTimeout(() => setProjectError(null), 5000);
       } else {
         const res = await response.json();
-        setProjects((prev) => [...prev, res.project]);
+        //setProjects(res.project);
+        fetchProjects();
         setIsModalOpen(false);
         reset();
       }
@@ -124,8 +130,7 @@ const Home = () => {
   const onAddMemberSubmit = async (data) => {
     try {
       const { name } = data;
-      const user=name;
-      data = { projectId: selectedProject._id, user };
+      data = { projectId: selectedProject._id, user: name };
       const response = await fetch(
         `http://localhost:3000/projects/add-user`,
         {
