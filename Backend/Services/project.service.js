@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import projectModel from "../Models/project.model.js";
+import userModel from "../Models/user.model.js";
 
 export const createProject = async (projectId, name, userId) => {
   if (!projectId) {
@@ -86,19 +87,33 @@ export const addUser = async ( user, projectId, userId ) => {
 };
 
 
+
 export const getProject = async ({ projectId }) => {
   if (!projectId) {
-    throw new Error("Project Id required");
+    throw new Error("Project ID required");
   }
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    throw new Error("Project ID is not Valid");
+    throw new Error("Project ID is not valid");
   }
+
   try {
-    const project = await projectModel.findOne({
-      _id: projectId,
-    });
-    return project;
+    const project = await projectModel.findOne({ _id: projectId });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+    if (!project.users || project.users.length === 0) {
+      return [];
+    }
+
+    
+    const users = await userModel.find(
+      { _id: { $in: project.users } },
+      { username: 1, _id: 0 }
+    ); 
+    return users.map((user) => user.username);
   } catch (error) {
     throw new Error(error.message);
   }
 };
+

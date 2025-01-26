@@ -1,57 +1,65 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { UserContext } from "../Context/user.context";
-//import { Cookie } from "@mui/icons-material";
-import Cookies from "js-cookie";
 
 const Home = () => {
-  const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (!user && !token) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [collaboratorModalOpen, setCollaboratorModalOpen] = useState(false);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [projectError, setProjectError] = useState(null);
-
+  const [collaborator, setCollaborator] = useState([])
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
- 
 
   // Fetch projects from the API
-  
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/projects/all", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch projects");
-        }
-        const data = await response.json();
-        setProjects(data.allProjects);
-      } catch (error) {
-        console.error(error.message);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/projects/all", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch projects");
       }
-    };
+      const data = await response.json();
+      setProjects(data.allProjects);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  const fetchProjectDetails = async (projectId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/projects/get-project/${projectId}`, {
+        method:"GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch project details");
+      }
+      const data = await response.json();
+      setCollaborator(data.project);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   const createProject = async (data) => {
     try {
@@ -97,7 +105,9 @@ const Home = () => {
             project._id === projectId
               ? {
                   ...project,
-                  users: project.users.filter((user) => user.id !== collaboratorId),
+                  users: project.users.filter(
+                    (user) => user.id !== collaboratorId
+                  ),
                 }
               : project
           )
@@ -107,8 +117,6 @@ const Home = () => {
       console.error("Error removing collaborator:", error.message);
     }
   };
-
-  // Handle logout functionality
 
   const handleLogout = async () => {
     try {
@@ -131,15 +139,12 @@ const Home = () => {
     try {
       const { name } = data;
       data = { projectId: selectedProject._id, user: name };
-      const response = await fetch(
-        `http://localhost:3000/projects/add-user`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`http://localhost:3000/projects/add-user`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
       if (response.ok) {
         const updatedProject = await response.json();
         setProjects((prev) =>
@@ -158,7 +163,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-start">
-       <button
+      <button
         onClick={handleLogout}
         className="absolute top-5 right-5 flex items-center bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
       >
@@ -183,7 +188,7 @@ const Home = () => {
           >
             <div
               className="flex-1 cursor-pointer"
-              onClick={() => navigate(`/project/${project._id}`)}
+              onClick={() => navigate(`/chat/${project._id}`)}
             >
               <h3 className="text-lg font-semibold">{project.name}</h3>
               <p className="text-sm text-gray-600">
@@ -193,6 +198,7 @@ const Home = () => {
             <div className="flex space-x-2">
               <button
                 onClick={() => {
+                  fetchProjectDetails(project._id);
                   setSelectedProject(project);
                   setCollaboratorModalOpen(true);
                 }}
@@ -219,11 +225,13 @@ const Home = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-4">
-             {selectedProject.name}
-             <p className="text-sm text-gray-600">{selectedProject.project_id}</p>
+              {selectedProject.name}
+              <p className="text-sm text-gray-600">
+                {selectedProject.project_id}
+              </p>
             </h2>
             <ul className="space-y-2">
-              {selectedProject.users.map((user) => (
+              {collaborator.map((user) => (
                 <li
                   key={user}
                   className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-md"
@@ -257,7 +265,10 @@ const Home = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-4">Add Collaborator</h2>
-            <form onSubmit={handleSubmit(onAddMemberSubmit)} className="space-y-4">
+            <form
+              onSubmit={handleSubmit(onAddMemberSubmit)}
+              className="space-y-4"
+            >
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">
                   Collaborator Name
