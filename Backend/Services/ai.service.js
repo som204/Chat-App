@@ -2,69 +2,68 @@ import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_KEY);
 const schema = {
-    description: "Express app file structure and setup instructions",
-    type: SchemaType.OBJECT,
-    properties: {
-      message: {
-        type: SchemaType.STRING,
-        description: "A brief message explaining the content of the schema",
-        nullable: false,
-      },
-      fileTree: {
-        type: SchemaType.ARRAY,
-        description: "List of files and directories in the Express app",
-        items: {
-          type: SchemaType.OBJECT,
-          properties: {
-            name: {
-              type: SchemaType.STRING,
-              description: "Name of the file or directory",
-              nullable: false,
-            },
-            content: {
-              type: SchemaType.STRING,
-              description: "Content of the file (if applicable)",
-              nullable: true,
-            },
-            children: {
-              type: SchemaType.ARRAY,
-              description: "Child files/directories (for directories)",
-              nullable: true,
-              items: {
-                type: SchemaType.OBJECT,
-                properties: {
-                  name: {
-                    type: SchemaType.STRING,
-                    description: "Name of the child file or directory",
-                    nullable: false,
-                  },
-                  content: {
-                    type: SchemaType.STRING,
-                    description: "Content of the child file (if applicable)",
-                    nullable: true,
-                  },
+  description: "Express app file structure and setup instructions",
+  type: SchemaType.OBJECT,
+  properties: {
+    message: {
+      type: SchemaType.STRING,
+      description: "A brief message explaining the content of the schema",
+      nullable: false,
+    },
+    fileTree: {
+      type: SchemaType.ARRAY,
+      description: "List of files and directories in the Express app",
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          name: {
+            type: SchemaType.STRING,
+            description: "Name of the file or directory",
+            nullable: false,
+          },
+          content: {
+            type: SchemaType.STRING,
+            description: "Content of the file (if applicable)",
+            nullable: true,
+          },
+          children: {
+            type: SchemaType.ARRAY,
+            description: "Child files/directories (for directories)",
+            nullable: true,
+            items: {
+              type: SchemaType.OBJECT,
+              properties: {
+                name: {
+                  type: SchemaType.STRING,
+                  description: "Name of the child file or directory",
+                  nullable: false,
                 },
-                required: ["name"],
+                content: {
+                  type: SchemaType.STRING,
+                  description: "Content of the child file (if applicable)",
+                  nullable: true,
+                },
               },
+              required: ["name"],
             },
           },
-          required: ["name"],
         },
-      },
-      instructions: {
-        type: SchemaType.ARRAY,
-        description: "Steps to set up and run the Express app",
-        items: {
-          type: SchemaType.STRING,
-          description: "Individual instruction step",
-          nullable: false,
-        },
+        required: ["name"],
       },
     },
-    required: ["message", "fileTree", "instructions"],
-  };
-  
-  
+    instructions: {
+      type: SchemaType.ARRAY,
+      description: "Steps to set up and run the Express app",
+      items: {
+        type: SchemaType.STRING,
+        description: "Individual instruction step",
+        nullable: false,
+      },
+    },
+  },
+  required: ["message", "fileTree", "instructions"],
+};
+
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp",
   responseMimeType: "application/json",
@@ -118,16 +117,16 @@ const model = genAI.getGenerativeModel({
   Response: {
   "message": "Here's your Express app with a proper file structure and code. Follow the instructions to set it up and run it.",
   "fileTree": {
-    "package.json": {
-      "name": "package.json",
-      "content": "{
+    package.json: {
+      file:{
+      contents: "{
         "name": "my-express-app",
         "version": "1.0.0",
         "description": "A basic Express app.",
         "main": "src/server.js",
         "scripts": {
-          "start": "node src/server.js",
-          "dev": "nodemon src/server.js"
+          "start": "node server.js",
+          "dev": "nodemon server.js"
         },
         "dependencies": {
           "express": "^4.18.2"
@@ -136,19 +135,13 @@ const model = genAI.getGenerativeModel({
           "nodemon": "^3.0.1"
             }
         }"
-    },
-    ".gitignore": {
-      "name": ".gitignore",
-      "content": "node_modules\n.env"
-    },
-      "server.js": {
-        "name": "server.js",
-        "content": "const express = require('express');
-                    const dotenv = require('dotenv');
-                    dotenv.config();
+}},
+      server.js: {
+        file:{
+        contents: "const express = require('express');
 
                     const app = express();
-                    const port = process.env.PORT || 3000;
+                    const port = 3000;
 
                     // Middleware to parse JSON
                     app.use(express.json());
@@ -167,10 +160,11 @@ const model = genAI.getGenerativeModel({
                     app.listen(port, () => {
                       console.log("Server is running on http://localhost:{port}");
                     });"
-      },
-      "routes.js": {
-        "name": "routes.js",
-        "content": "const express = require('express');
+}
+                    },
+      routes.js: {
+        file:{
+        contents: "const express = require('express');
                     const router = express.Router();
 
                     // Default route
@@ -184,15 +178,19 @@ const model = genAI.getGenerativeModel({
                     });
 
                     module.exports = router;"
-                },
-    ".env": {
-      "name": ".env",
-      "content": "PORT=3000"
-        }
+}},
 },
-  "instructions": "Setup Instructions: 1. Create the project directory: mkdir my-express-app && cd my-express-app 2. Initialize the project and install dependencies: npm install 3. Create the required files and structure: - Add the package.json file with the provided content. - Add .gitignore to ignore node_modules and .env. - Create a src directory and add server.js inside it. - Create a routes.js file inside src with the provided content. - Add a .env file at the root with the provided content. 4. Run the server: - Start in development mode (automatic restarts): npm run dev - Or start in production mode: npm start 5. Test the application: - Open your browser and navigate to: - Home Route: http://localhost:3000 – Displays \"Hello from Express!\" - About Route: http://localhost:3000/about – Displays \"This is the About page!\""
+  "buildCommands": "[
+    "npm install"
+  ]",
+  "runCommands": "[
+    "npm start"
+  ]"
 }
 
+Note: 1)Don't write src/server.js in fileTree, just write server.js
+      2)Give proper new line and tab space in contents of file
+      3)Don't make the object key in fileTree as string like "package.json" it should be package.json
 </Example1>
 
 <Example2>
@@ -299,8 +297,8 @@ const model = genAI.getGenerativeModel({
             "message": "Here's a Java program that calculates the sum of two digits.  This program handles various input scenarios, including invalid input and non-digit characters. \n\n",
             "fileTree": {
                 "SumOfTwoDigits.java": {
-                "name": "SumOfTwoDigits.java",
-                "content": "import java.util.Scanner;
+                    "file": {
+                "contents": "import java.util.Scanner;
 
 public class SumOfTwoDigits {
 
@@ -336,7 +334,7 @@ public class SumOfTwoDigits {
     }
 }
 "
-                }
+}}
             },
             "instructions": "1. **Save the Code:** Save the provided code as SumOfTwoDigits.java.\n2. **Compile:** Open a terminal or command prompt, navigate to the directory where you saved the file, and compile using the command: javac SumOfTwoDigits.java\n3. **Run:** After successful compilation, run the program using: java SumOfTwoDigits\n4. **Input:** The program will prompt you to enter two digits separated by a space.  Enter the numbers and press Enter. \n5. **Output:** The program will display the sum of the two digits.  It also includes error handling for invalid inputs.\n\n**Example Usage:**\n\n\nInput: 5 7\nOutput: The sum of the two digits is: 12\n\nInput: 12 3\nOutput: Invalid input: Both inputs must be single digits (0-9).\n\nInput: a b\nOutput: Invalid input: Please enter digits only.\n"
             }

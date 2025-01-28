@@ -9,32 +9,43 @@ import {
 } from "../config/socket";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../context/user.context";
+import { getWebContainer } from "../config/webcontainer";
+import { set } from "react-hook-form";
 
 const ChatWithEditor = () => {
-  const [message, setMessage] = useState(""); // For the current message input
-  const [messages, setMessages] = useState([]); // For storing all chat messages
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
   const { projectId } = useParams();
-  const { user } = useContext(UserContext);
-  const [selectedFile, setSelectedFile] = useState(null); // For the selected file
-  const [editorContent, setEditorContent] = useState(""); // For the code editor
+  const { user } = useContext(UserContext); // Ensure UserContext is wrapped correctly
+  const [selectedFile, setSelectedFile] = useState(null);
   const [fileTree, setfileTree] = useState({});
-
+  const [webContainer, setWebContainer] = useState(null);
   const messagesEndRef = useRef(null);
+  const [iframeURL, setIframeURL] = useState("");
+  const [runProcess, setrunProcess] = useState(null);
 
   useEffect(() => {
     const socket = initializeSocket(projectId);
+
+    if (!webContainer) {
+      getWebContainer().then((container) => {
+        setWebContainer(container);
+        console.log("WebContainer initialized");
+      });
+    }
+
     socketReceiveMessage("project-message", (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
     });
+
     return () => {
       if (socket) {
         socket.disconnect();
       }
     };
-  }, [projectId]);
+  }, [projectId, webContainer]);
 
   useEffect(() => {
-    // Scroll to the bottom whenever messages change
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -44,59 +55,88 @@ const ChatWithEditor = () => {
     if (message.trim() !== "") {
       const newMessage = {
         text: message,
-        sender: user._id,
-        username: user.username,
+        sender: user?._id || "Anonymous",
+        username: user?.username || "Anonymous",
         receiver: "all",
       };
 
-      // Send the message to the server
       socketSendMessage("project-message", newMessage);
-
-      setMessages((prevMessages) => [...prevMessages, newMessage]); // Add new message at the bottom
-
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage("");
     }
   };
 
-  function parseMessage(message) {
-    if (message?.startsWith("`")) {
-      message = message.slice(7, -4);
-    }
+  const parseMessage = (message) => {
     try {
-      const cleanJson = JSON.parse(
-        JSON.stringify(message, (key, value) =>
-          typeof value === "string" ? value.replace(/\n/g, "\n") : value
-        )
-      );
-      if (typeof cleanJson !== "object" && cleanJson !== null) {
-        const original = JSON.parse(cleanJson);
-        return original;
+      if (message?.startsWith("`")) {
+        message = message.slice(7, -4);
       }
-
-      return cleanJson;
+      message = message.replace(/\n/g, "\n").replace(/[\x00-\x1F\x7F]/g, "");
+      return JSON.parse(message);
     } catch (error) {
-      console.error("Error parsing message:", error);
-      return { message: "Invalid JSON format" };
+      //console.error("Error parsing message:", message);
+      return { message: "Invalid JSON format", details: error.message };
     }
-  }
+  };
 
   useEffect(() => {
     const aiMessage = [...messages]
       .reverse()
-      .find((msg) => msg.username === "AI" && msg.receiver === user._id);
+      .find((msg) => msg.username === "AI" && msg.receiver === user?._id);
 
     if (aiMessage) {
       try {
         const parsed = parseMessage(aiMessage.text);
-
         if (parsed?.fileTree) {
           setfileTree(parsed.fileTree);
+          if (webContainer) {
+            webContainer.mount(parsed.fileTree);
+          }
         }
       } catch (error) {
         console.error("Error parsing AI message:", error);
       }
     }
-  }, [messages, user._id]);
+  }, [messages, user?._id, webContainer]);
+
+  const handleRunCode = async () => {
+    if (webContainer) {
+      try {
+        const installProcess = await webContainer.spawn("npm", ["install"]);
+        installProcess.output.pipeTo(
+          new WritableStream({
+            write(chunk) {
+              console.log(chunk);
+            },
+          })
+        );
+        if (runProcess) {
+          runProcess.kill();
+        }
+        const tempRunProcess = await webContainer.spawn("npm", ["start"]);
+        tempRunProcess.output.pipeTo(
+          new WritableStream({
+            write(chunk) {
+              console.log(chunk);
+            },
+          })
+        );
+        setrunProcess(tempRunProcess);
+
+        // Listen for the server-ready event to get the iframe URL
+        webContainer.on("server-ready", (port, url) => {
+          console.log("Server ready at:", url);
+          if (url) {
+            setIframeURL(url); // Update iframe URL in state
+          } else {
+            console.error("Error: Server URL is undefined.");
+          }
+        });
+      } catch (error) {
+        console.error("Error running code:", error);
+      }
+    }
+  };
 
   const renderMessageContent = (msg) => {
     if (msg.username === "AI") {
@@ -111,7 +151,6 @@ const ChatWithEditor = () => {
     }
   };
 
-
   return (
     <div className="h-screen flex">
       {/* Chat Area */}
@@ -125,10 +164,10 @@ const ChatWithEditor = () => {
             <div
               key={index}
               className={`flex items-start space-x-1 ${
-                msg.sender === user._id ? "justify-end" : "justify-start"
+                msg.sender === user?._id ? "justify-end" : "justify-start"
               }`}
             >
-              {msg.sender !== user._id && (
+              {msg.sender !== user?._id && (
                 <div className="flex-shrink-0">
                   <AccountCircleIcon
                     className="text-gray-500"
@@ -139,12 +178,12 @@ const ChatWithEditor = () => {
 
               <div
                 className={`flex flex-col items-start mt-1 pr-3 pb-3 pl-2 pt-1 rounded-lg shadow-sm max-w-full overflow-auto ${
-                  msg.sender === user._id
+                  msg.sender === user?._id
                     ? "bg-blue-500 text-white self-end"
                     : "bg-white border border-gray-300"
                 }`}
               >
-                {msg.sender !== user._id && (
+                {msg.sender !== user?._id && (
                   <span className="text-xs text-gray-500 font-medium">
                     {msg.username}
                   </span>
@@ -181,7 +220,7 @@ const ChatWithEditor = () => {
             Object.keys(fileTree).map((file, index) => (
               <li
                 key={index}
-                onClick={(e) => setSelectedFile(file)}
+                onClick={() => setSelectedFile(file)}
                 className={`p-2 m-1 cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
                   selectedFile === file ? "bg-blue-500 text-white" : ""
                 }`}
@@ -194,12 +233,68 @@ const ChatWithEditor = () => {
 
       {/* Code Editor */}
       <div className="flex-grow bg-gray-100 shadow-md p-4 h-full">
-        <h2 className="text-lg font-bold mb-3">Code Editor</h2>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-bold">Code Editor</h2>
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
+            onClick={handleRunCode}
+          >
+            Run
+          </button>
+        </div>
         <textarea
-          value={fileTree[selectedFile]?.content}
-          onChange={(e) => setfileTree({...fileTree,[selectedFile]:{content:e.target.value}})}
-          className="w-full h-[calc(100vh-4rem)] p-3 border border-gray-300 rounded-md font-mono text-sm"
+          value={fileTree[selectedFile]?.file?.contents || ""}
+          onChange={(e) => {
+            setfileTree((prevFileTree) => {
+              const updatedFileTree = {
+                ...prevFileTree,
+                [selectedFile]: {
+                  ...prevFileTree[selectedFile],
+                  file: {
+                    ...prevFileTree[selectedFile]?.file,
+                    contents: e.target.value,
+                  },
+                },
+              };
+
+              if (webContainer) {
+                webContainer.mount(updatedFileTree);
+              }
+
+              return updatedFileTree;
+            });
+          }}
+          className="w-full h-[calc(100vh-5rem)] p-3 border border-gray-300 rounded-md font-mono text-sm"
         />
+      </div>
+
+      {/* iFrame Preview */}
+      <div className="w-1/4 h-full flex flex-col">
+        {/* URL Bar */}
+        <div className="flex items-center bg-gray-200 p-2 border-b border-gray-300">
+          <input
+            type="text"
+            value={iframeURL}
+            onChange={(e) => setIframeURL(e.target.value)}
+            placeholder="Enter URL..."
+            className="flex-grow p-2 border border-gray-300 rounded-md text-sm outline-none"
+          />
+          
+        </div>
+
+        {/* iFrame */}
+        {iframeURL ? (
+          <iframe
+            src={iframeURL}
+            className="w-full flex-grow border-t border-gray-300"
+            title="Live Preview"
+            sandbox="allow-scripts allow-same-origin"
+          ></iframe>
+        ) : (
+          <div className="flex-grow flex items-center justify-center">
+            <p>Waiting for server to start...</p>
+          </div>
+        )}
       </div>
     </div>
   );

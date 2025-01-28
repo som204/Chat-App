@@ -19,17 +19,15 @@ io.use(async (socket, next) => {
     socket.handshake.auth?.token ||
     socket.handshake.headers.authorization?.split(" ")[1];
   const projectId = socket.handshake.query.projectId;
-  console.log("Received Token:", token);
-  console.log("Received Project ID:", projectId);
   if (!token) {
     return next(new Error("Authentication Error"));
   }
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
     return next(new Error("Invalid Project Id"));
   }
-  socket.project = await projectModel.findById(projectId);
-  const user = jwt.verify(token, process.env.JWT_SECRET);
   try {
+    socket.project = await projectModel.findById(projectId);
+    const user = jwt.verify(token, process.env.JWT_SECRET);
     if (!user) {
       return next(new Error("Authentication Error"));
     }
