@@ -10,7 +10,7 @@ import {
 import { useParams } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import { getWebContainer } from "../config/webcontainer";
-import { set } from "react-hook-form";
+import { tree } from "./tree";
 
 const ChatWithEditor = () => {
   const [message, setMessage] = useState("");
@@ -18,11 +18,14 @@ const ChatWithEditor = () => {
   const { projectId } = useParams();
   const { user } = useContext(UserContext); // Ensure UserContext is wrapped correctly
   const [selectedFile, setSelectedFile] = useState(null);
-  const [fileTree, setfileTree] = useState({});
+  const [fileTree, setFileTree] = useState({});
   const [webContainer, setWebContainer] = useState(null);
   const messagesEndRef = useRef(null);
   const [iframeURL, setIframeURL] = useState("");
-  const [runProcess, setrunProcess] = useState(null);
+  const [runProcess, setRunProcess] = useState(null);
+  const [dir, setDir] = useState(null); // Add state for directory
+  const [totalFile, setTotalFile] = useState();
+  const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
     const socket = initializeSocket(projectId);
@@ -72,10 +75,10 @@ const ChatWithEditor = () => {
         message = message.slice(7, -4);
       }
       message = message.replace(/\n/g, "\n").replace(/[\x00-\x1F\x7F]/g, "");
+
       return JSON.parse(message);
     } catch (error) {
       //console.error("Error parsing message:", message);
-      return { message: "Invalid JSON format", details: error.message };
     }
   };
 
@@ -87,10 +90,11 @@ const ChatWithEditor = () => {
     if (aiMessage) {
       try {
         const parsed = parseMessage(aiMessage.text);
+        setTotalFile(parsed.runCommands);
         if (parsed?.fileTree) {
-          setfileTree(parsed.fileTree);
+          setFileTree(parsed?.fileTree);
           if (webContainer) {
-            webContainer.mount(parsed.fileTree);
+            webContainer.mount(parsed?.fileTree);
           }
         }
       } catch (error) {
@@ -113,6 +117,8 @@ const ChatWithEditor = () => {
         if (runProcess) {
           runProcess.kill();
         }
+        //const tempRunProcess = await webContainer.spawn("npm", ["run", "dev"]);
+        //console.log(totalFile);
         const tempRunProcess = await webContainer.spawn("npm", ["start"]);
         tempRunProcess.output.pipeTo(
           new WritableStream({
@@ -121,7 +127,7 @@ const ChatWithEditor = () => {
             },
           })
         );
-        setrunProcess(tempRunProcess);
+        setRunProcess(tempRunProcess);
 
         // Listen for the server-ready event to get the iframe URL
         webContainer.on("server-ready", (port, url) => {
@@ -143,12 +149,104 @@ const ChatWithEditor = () => {
       const parsed = parseMessage(msg.text);
       return (
         <ReactMarkdown className="text-sm bg-slate-700 text-white rounded-sm">
-          {parsed.message}
+          {parsed?.message}
         </ReactMarkdown>
       );
     } else {
       return <span className="text-sm">{msg.text}</span>;
     }
+  };
+
+  const getFileContents = (fileTree, selectedFile) => {
+    if (!selectedFile || !fileTree) return "";
+
+    for (const key in fileTree) {
+      const node = fileTree[key];
+
+      // If it's a file and matches the selected file, return its contents
+      if (node.file && key === selectedFile) {
+        return node.file.contents || "";
+      }
+
+      // If it's a directory, recursively search inside it
+      if (node.directory) {
+        const found = getFileContents(node.directory, selectedFile);
+        if (found) return found;
+      }
+    }
+
+    return "";
+  };
+
+  const updateFileContents = (fileTree, selectedFile, newContents) => {
+    if (!selectedFile || !fileTree) return fileTree;
+
+    // Make a deep copy of fileTree to prevent mutation
+    const updatedFileTree = { ...fileTree };
+
+    const updateRecursively = (tree) => {
+      for (const key in tree) {
+        const node = tree[key];
+
+        // If it's the selected file, update its contents
+        if (node.file && key === selectedFile) {
+          tree[key] = {
+            ...node,
+            file: {
+              ...node.file,
+              contents: newContents,
+            },
+          };
+          return true; // Stop further searching once found
+        }
+
+        // If it's a directory, recursively search inside it
+        if (node.directory) {
+          const found = updateRecursively(node.directory);
+          if (found) return true; // Stop searching once file is updated
+        }
+      }
+      return false;
+    };
+
+    updateRecursively(updatedFileTree);
+    return updatedFileTree;
+  };
+
+  // Recursive function to render file structure
+  const renderFileStructure = (files, parentDir = "") => {
+    return Object.keys(files).map((fileKey) => {
+      const file = files[fileKey];
+      const isDirectory = file?.directory;
+
+      return (
+        <div key={fileKey} className="p-2 m-1">
+          <div
+            onClick={() => {
+              if (isDirectory) {
+                setDir(fileKey); // Set the directory if it's a folder
+                setSelectedFile(null);
+              } else {
+                setSelectedFile(fileKey); // Set the file if it's a file
+                setDir(parentDir || null);
+              }
+            }}
+            className={`cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
+              selectedFile === fileKey ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {isDirectory ? `📁 ${fileKey}` : `📄 ${fileKey}`}
+          </div>
+
+          {/* Recursively render directory contents */}
+          {isDirectory && (
+            <div className="ml-4">
+              {renderFileStructure(file.directory, fileKey)}
+            </div>
+          )}
+        </div>
+      );
+    });
   };
 
   return (
@@ -215,85 +313,79 @@ const ChatWithEditor = () => {
       {/* File List */}
       <div className="w-1/6 bg-gray-200 shadow-md p-3 overflow-y-auto">
         <h2 className="text-lg font-bold mb-3">Files</h2>
-        <ul>
-          {fileTree &&
-            Object.keys(fileTree).map((file, index) => (
-              <li
-                key={index}
-                onClick={() => setSelectedFile(file)}
-                className={`p-2 m-1 cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
-                  selectedFile === file ? "bg-blue-500 text-white" : ""
-                }`}
-              >
-                {file}
-              </li>
-            ))}
-        </ul>
+        <div>{renderFileStructure(fileTree)}</div>
       </div>
 
-      {/* Code Editor */}
-      <div className="flex-grow bg-gray-100 shadow-md p-4 h-full">
+      {/* Code Editor and iFrame Preview */}
+      <div className="flex-grow bg-gray-100 shadow-md p-4 h-full overflow-hidden">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold">Code Editor</h2>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
-            onClick={handleRunCode}
-          >
-            Run
-          </button>
-        </div>
-        <textarea
-          value={fileTree[selectedFile]?.file?.contents || ""}
-          onChange={(e) => {
-            setfileTree((prevFileTree) => {
-              const updatedFileTree = {
-                ...prevFileTree,
-                [selectedFile]: {
-                  ...prevFileTree[selectedFile],
-                  file: {
-                    ...prevFileTree[selectedFile]?.file,
-                    contents: e.target.value,
-                  },
-                },
-              };
-
-              if (webContainer) {
-                webContainer.mount(updatedFileTree);
-              }
-
-              return updatedFileTree;
-            });
-          }}
-          className="w-full h-[calc(100vh-5rem)] p-3 border border-gray-300 rounded-md font-mono text-sm"
-        />
-      </div>
-
-      {/* iFrame Preview */}
-      <div className="w-1/4 h-full flex flex-col">
-        {/* URL Bar */}
-        <div className="flex items-center bg-gray-200 p-2 border-b border-gray-300">
-          <input
-            type="text"
-            value={iframeURL}
-            onChange={(e) => setIframeURL(e.target.value)}
-            placeholder="Enter URL..."
-            className="flex-grow p-2 border border-gray-300 rounded-md text-sm outline-none"
-          />
-          
-        </div>
-
-        {/* iFrame */}
-        {iframeURL ? (
-          <iframe
-            src={iframeURL}
-            className="w-full flex-grow border-t border-gray-300"
-            title="Live Preview"
-            sandbox="allow-scripts allow-same-origin"
-          ></iframe>
-        ) : (
-          <div className="flex-grow flex items-center justify-center">
-            <p>Waiting for server to start...</p>
+          <h2 className="text-lg font-bold">
+            {isPreview ? "Preview" : "Code Editor"}
+          </h2>
+          <div>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 mr-2"
+              onClick={handleRunCode}
+            >
+              Run
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200"
+              onClick={() => setIsPreview(!isPreview)}
+            >
+              {isPreview ? "Show Editor" : "Show Preview"}
+            </button>
           </div>
+        </div>
+        {isPreview ? (
+          <div className="w-full h-[calc(100vh-5rem)]">
+            <div className="mb-2">
+              <input
+                type="text"
+                value={iframeURL}
+                onChange={(e) => setIframeURL(e.target.value)}
+                onBlur={() => {
+                  if (webContainer) {
+                    webContainer.mount(fileTree);
+                  }
+                }}
+                className="w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            {iframeURL ? (
+              <iframe
+                src={iframeURL}
+                className="w-full h-full border-t border-gray-300"
+                title="Live Preview"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              ></iframe>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p>Waiting for server to start...</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <textarea
+            value={getFileContents(fileTree, selectedFile)}
+            onChange={(e) => {
+              if (selectedFile) {
+                const newContents = e.target.value;
+
+                const updatedFileTree = updateFileContents(
+                  fileTree,
+                  selectedFile,
+                  newContents
+                );
+
+                setFileTree(updatedFileTree);
+                if (webContainer) {
+                  webContainer.mount(updatedFileTree);
+                }
+              }
+            }}
+            className="w-full h-[calc(100vh-5rem)] p-3 border border-gray-300 rounded-md font-mono text-sm"
+          />
         )}
       </div>
     </div>
