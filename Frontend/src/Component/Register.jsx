@@ -5,7 +5,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import { CircularProgress } from "@mui/material";
 import { useNavigate, Link } from "react-router";
 import { GitHub, Google } from "@mui/icons-material";
-import { UserContext } from "../Context/user.context";
+import { UserContext } from "../context/user.context";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,8 @@ const Register = () => {
       } else {
         const res = await response.json();
         setUser(res.user);
-        navigate("/");
+        Cookies.set("username",JSON.stringify(res.user));
+        navigate("/home");
       }
     } catch (error) {
       setRegisterError(error.message);

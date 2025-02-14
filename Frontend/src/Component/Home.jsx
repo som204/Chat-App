@@ -1,9 +1,11 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState,useContext} from "react";
 import { useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import Cookies from "js-cookie";
+import { UserContext } from "../context/user.context";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const Home = () => {
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [projectError, setProjectError] = useState(null);
   const [collaborator, setCollaborator] = useState([])
+  const { user, setUser } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -21,7 +24,12 @@ const Home = () => {
     reset,
   } = useForm();
 
-  // Fetch projects from the API
+  useEffect(() => {
+    let username = Cookies.get("token");
+    if(!username){
+      navigate('/login');
+    }
+  }, []);
 
   const fetchProjects = async () => {
     try {
@@ -88,25 +96,28 @@ const Home = () => {
     }
   };
 
-  const handleRemoveCollaborator = async (projectId, collaboratorId) => {
+  const handleRemoveCollaborator = async (projectId, collaboratorName) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/projects/${projectId}/remove-collaborator`,
+        `http://localhost:3000/projects/delete-user/${projectId}`,
         {
-          method: "POST",
+          method: "DELETE",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ collaboratorId }),
+          body: JSON.stringify( {collaboratorName} ),
         }
       );
+      const id=await response.json();
+      console.log(id.updatedProject);
       if (response.ok) {
+        fetchProjectDetails(projectId);
         setProjects((prev) =>
           prev.map((project) =>
             project._id === projectId
               ? {
                   ...project,
                   users: project.users.filter(
-                    (user) => user.id !== collaboratorId
+                    (user) => user !== id.updatedProject
                   ),
                 }
               : project
@@ -125,6 +136,8 @@ const Home = () => {
         credentials: "include",
       });
       if (response.ok) {
+        Cookies.remove("username");
+        Cookies.remove("token");
         navigate("/login");
       } else {
         const error = await response.json();
@@ -192,7 +205,7 @@ const Home = () => {
             >
               <h3 className="text-lg font-semibold">{project.name}</h3>
               <p className="text-sm text-gray-600">
-                Collaborators: {project.users.length}
+                Collaborators: {project.users.length }
               </p>
             </div>
             <div className="flex space-x-2">
@@ -239,7 +252,7 @@ const Home = () => {
                   <span>{user}</span>
                   <button
                     onClick={() =>
-                      handleRemoveCollaborator(selectedProject._id, user.id)
+                      handleRemoveCollaborator(selectedProject._id, user)
                     }
                     className="text-red-500 hover:underline"
                   >

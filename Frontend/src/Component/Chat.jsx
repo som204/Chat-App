@@ -10,22 +10,32 @@ import {
 import { useParams } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import { getWebContainer } from "../config/webcontainer";
-import { tree } from "./tree";
+import Cookies from "js-cookie";
+import { IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 const ChatWithEditor = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const { projectId } = useParams();
-  const { user } = useContext(UserContext); // Ensure UserContext is wrapped correctly
+  const { user, setUser } = useContext(UserContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileTree, setFileTree] = useState({});
   const [webContainer, setWebContainer] = useState(null);
   const messagesEndRef = useRef(null);
   const [iframeURL, setIframeURL] = useState("");
   const [runProcess, setRunProcess] = useState(null);
-  const [dir, setDir] = useState(null); // Add state for directory
-  const [totalFile, setTotalFile] = useState();
   const [isPreview, setIsPreview] = useState(false);
+  const [cmd, setCmd] = useState();
+
+  useEffect(() => {
+    if (!user) {
+      const username = JSON.parse(Cookies.get("username"));
+      setUser(username);
+    }
+  }, []);
 
   useEffect(() => {
     const socket = initializeSocket(projectId);
@@ -74,7 +84,7 @@ const ChatWithEditor = () => {
       if (message?.startsWith("`")) {
         message = message.slice(7, -4);
       }
-      message = message.replace(/\n/g, "\n").replace(/[\x00-\x1F\x7F]/g, "");
+      message = message.replace(/[\x00-\x1F\x7F]/g, "");
 
       return JSON.parse(message);
     } catch (error) {
@@ -90,7 +100,7 @@ const ChatWithEditor = () => {
     if (aiMessage) {
       try {
         const parsed = parseMessage(aiMessage.text);
-        setTotalFile(parsed.runCommands);
+        setCmd(parsed.runCommands);
         if (parsed?.fileTree) {
           setFileTree(parsed?.fileTree);
           if (webContainer) {
@@ -117,9 +127,10 @@ const ChatWithEditor = () => {
         if (runProcess) {
           runProcess.kill();
         }
-        //const tempRunProcess = await webContainer.spawn("npm", ["run", "dev"]);
-        //console.log(totalFile);
-        const tempRunProcess = await webContainer.spawn("npm", ["start"]);
+        let tempRunProcess;
+        if(cmd){
+         tempRunProcess = await webContainer.spawn("npm",cmd);
+        }
         tempRunProcess.output.pipeTo(
           new WritableStream({
             write(chunk) {
@@ -224,11 +235,9 @@ const ChatWithEditor = () => {
           <div
             onClick={() => {
               if (isDirectory) {
-                setDir(fileKey); // Set the directory if it's a folder
                 setSelectedFile(null);
               } else {
-                setSelectedFile(fileKey); // Set the file if it's a file
-                setDir(parentDir || null);
+                setSelectedFile(fileKey);
               }
             }}
             className={`cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
@@ -247,6 +256,24 @@ const ChatWithEditor = () => {
         </div>
       );
     });
+  };
+
+  const createZipFromFileTree = (zip, tree, path = "") => {
+    Object.keys(tree).forEach((key) => {
+      if (tree[key].file) {
+        zip.file(`${path}${key}`, tree[key].file.contents);
+      } else if (tree[key].directory) {
+        const folder = zip.folder(key);
+        createZipFromFileTree(folder, tree[key].directory, `${key}/`);
+      }
+    });
+  };
+
+  const handleDownload = async () => {
+    const zip = new JSZip();
+    createZipFromFileTree(zip, fileTree);
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "project.zip");
   };
 
   return (
@@ -312,7 +339,14 @@ const ChatWithEditor = () => {
 
       {/* File List */}
       <div className="w-1/6 bg-gray-200 shadow-md p-3 overflow-y-auto">
-        <h2 className="text-lg font-bold mb-3">Files</h2>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-bold">Files</h2>
+          {!(Object.keys(fileTree).length === 0) && (
+            <IconButton color="primary" onClick={handleDownload}>
+              <DownloadIcon />
+            </IconButton>
+          )}
+        </div>
         <div>{renderFileStructure(fileTree)}</div>
       </div>
 

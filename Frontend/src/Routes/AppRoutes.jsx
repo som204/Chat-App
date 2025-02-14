@@ -5,12 +5,14 @@ import Register from '../Component/Register'
 import Home from '../Component/Home'
 import Chat from '../Component/Chat'
 import UserAuth from '../Authorization/UserAuth'
+import Landing from '../Component/Landing'
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
         <Routes>
-            <Route path='/' element={<UserAuth><Home/></UserAuth>} />
+            <Route path='/' element={<Landing/>} />
+            <Route path='/home' element={<UserAuth><Home/></UserAuth>} />
             <Route path='/login' element={<Login/>} />
             <Route path='/register' element={<Register/>} />
             <Route path='/chat/:projectId' element={<UserAuth><Chat/></UserAuth>} />

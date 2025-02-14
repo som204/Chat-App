@@ -127,12 +127,11 @@ const model = genAI.getGenerativeModel({
     }
   },
   "buildCommands": [
-    "npm","install"
+    "install"
   ],
   "runCommands": [
-    "npm", "start"
-  ],
-  "files":["package.json","server.js","routes/route.js"]
+    "start"
+  ]
 }
 
 </Example1>
@@ -316,19 +315,36 @@ const model = genAI.getGenerativeModel({
   };",
     },
   },
+  "tailwind.config.js":{
+  file:{
+  contents: "/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './public/index.html'
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}"
+  }
+  }
 },
     "buildCommands": [
-      "npm" ,"install"
+      "install"
     ],
     "runCommands": [
-      "npm","run","dev"
-    ],
-    "files":["package.json","public/index.html","src/index.js","src/App.js","src/App.css","src/index.css"]
+      "run","dev"
+    ]
   }
-}
 
-Note: 1) Strictly follow this file structure .
+
+Note: 1) Strictly follow this file structure & the template .
       2) If their is any folder mark it as directory and if their is any file mark it as file.
+      3) Must include tailwind.config.js,postcss.config.js,vite.config.js for  react app with tailwind.
+      4) Must follow the given package.json ... Only if required then modify
+      5) Must include type:module
 
 </Example3>
 
@@ -478,9 +494,14 @@ public class SumOfTwoDigits {
 `,
 });
 
-export const generateAnswer = async (prompt) => {
+const history = [];
+
+export const generateAnswer = async (prompt, username) => {
   try {
-    const result = await model.generateContent(prompt);
+    const chat = model.startChat({
+      history,
+    });
+    const result = await chat.sendMessage(`${username}: ${prompt}`);
     return result.response.text();
   } catch (error) {
     console.log(error);

@@ -24,4 +24,6 @@ router.put(
 
 router.get("/get-project/:projectId",authorization,projectController.getProjectController);
 
+router.delete("/delete-user/:projectId",authorization,projectController.deleteUserController);
+
 export default router;

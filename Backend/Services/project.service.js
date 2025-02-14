@@ -75,7 +75,7 @@ export const addUser = async ( user, projectId, userId ) => {
     const updatedProject = await projectModel.findOneAndUpdate(
       { _id: projectId },
       {
-        $addToSet: { users: { $each: user } }, // Add multiple users without duplicates
+        $addToSet: { users: { $each: user } },
       },
       { new: true }
     );
@@ -116,4 +116,37 @@ export const getProject = async ({ projectId }) => {
     throw new Error(error.message);
   }
 };
+
+export const deleteUser = async({projectId,collaboratorName})=>{
+  if (!projectId) {
+    throw new Error("Project ID required");
+  }
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    throw new Error("Project ID is not valid");
+  }
+  if (!collaboratorName) {
+    throw new Error("Username required");
+  }
+  try {
+    const user = await userModel.findOne({ username: collaboratorName });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const updatedProject = await projectModel.findOneAndUpdate(
+      { _id: projectId },
+      { $pull: { users: user._id } },
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      throw new Error("Project not found or user not part of the project");
+    }
+
+    return user._id;
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message);
+  }
+}
 

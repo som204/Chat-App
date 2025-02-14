@@ -50,7 +50,6 @@ export const addUserController = async (req, res) => {
 
   try {
     const { user, projectId } = req.body;
-    console.log(user, projectId);
     const loggedInUserEmail = req.user.email;
     const loggedInUser = await UserModel.findOne({ email: loggedInUserEmail });
     const userId = loggedInUser._id;
@@ -74,3 +73,14 @@ export const getProjectController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const deleteUserController =async(req,res)=>{
+  const {projectId}=req.params;
+  const {collaboratorName}=req.body;
+  try {
+    const updatedProject= await projectService.deleteUser({projectId,collaboratorName});
+    res.status(200).json({updatedProject});
+  } catch (error) {
+    res.status(400).json({message:error.message});
+  }
+}

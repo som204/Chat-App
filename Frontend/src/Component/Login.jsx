@@ -6,7 +6,8 @@ import { CircularProgress } from "@mui/material";
 import { useNavigate,Link } from "react-router";
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { UserContext } from "../Context/user.context";
+import { UserContext } from "../context/user.context";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -41,7 +42,8 @@ const Login = () => {
       } else {
         const res = await response.json();
         setUser(res.user);
-        navigate("/");
+        Cookies.set("username",JSON.stringify(res.user));
+        navigate("/home");
       }
     } catch (error) {
       setLoginError(error.message);
