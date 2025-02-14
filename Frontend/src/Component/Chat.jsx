@@ -15,6 +15,10 @@ import { IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
 
 const ChatWithEditor = () => {
   const [message, setMessage] = useState("");
@@ -128,8 +132,8 @@ const ChatWithEditor = () => {
           runProcess.kill();
         }
         let tempRunProcess;
-        if(cmd){
-         tempRunProcess = await webContainer.spawn("npm",cmd);
+        if (cmd) {
+          tempRunProcess = await webContainer.spawn("npm", cmd);
         }
         tempRunProcess.output.pipeTo(
           new WritableStream({
@@ -400,25 +404,24 @@ const ChatWithEditor = () => {
             )}
           </div>
         ) : (
-          <textarea
+          <CodeMirror
             value={getFileContents(fileTree, selectedFile)}
-            onChange={(e) => {
+            extensions={[javascript(), html(), css()]}
+            theme="dark"
+            onChange={(newContents) => {
               if (selectedFile) {
-                const newContents = e.target.value;
-
                 const updatedFileTree = updateFileContents(
                   fileTree,
                   selectedFile,
                   newContents
                 );
-
                 setFileTree(updatedFileTree);
                 if (webContainer) {
                   webContainer.mount(updatedFileTree);
                 }
               }
             }}
-            className="w-full h-[calc(100vh-5rem)] p-3 border border-gray-300 rounded-md font-mono text-sm"
+            height="90vh"
           />
         )}
       </div>
