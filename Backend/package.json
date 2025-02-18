@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.741.0",
+    "@aws-sdk/client-s3": "^3.749.0",
     "@google/generative-ai": "^0.21.0",
     "bcrypt": "^5.1.1",
     "compile-run": "^2.3.4",
@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "socket.io": "^4.8.1"
   }
 }

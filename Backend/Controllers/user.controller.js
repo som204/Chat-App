@@ -26,7 +26,7 @@ export const createUserController = async (req, res) => {
     return res
     .cookie("token", token)
     .status(200)
-    .send({user});  
+    .send({user});
     
   } catch (error) {
     return res.status(400).send({ message: error.message || "An error occurred while creating the user." });

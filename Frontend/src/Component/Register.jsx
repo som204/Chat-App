@@ -6,6 +6,7 @@ import { CircularProgress } from "@mui/material";
 import { useNavigate, Link } from "react-router";
 import { GitHub, Google } from "@mui/icons-material";
 import { UserContext } from "../context/user.context";
+import Cookies from "js-cookie";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,7 @@ const Register = () => {
     try {
       const response = await fetch("http://localhost:3000/users/register", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -41,6 +43,7 @@ const Register = () => {
         navigate("/home");
       }
     } catch (error) {
+      console.log(error);
       setRegisterError(error.message);
       setTimeout(() => setRegisterError(null), 5000);
     } finally {

@@ -17,6 +17,20 @@ const Home = () => {
   const [projectError, setProjectError] = useState(null);
   const [collaborator, setCollaborator] = useState([])
   const { user, setUser } = useContext(UserContext);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (error) {
+      alert(error);
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  
   const {
     register,
     handleSubmit,
@@ -42,6 +56,7 @@ const Home = () => {
       const data = await response.json();
       setProjects(data.allProjects);
     } catch (error) {
+      setError(error.message);
       console.error(error.message);
     }
   };
@@ -65,6 +80,7 @@ const Home = () => {
       const data = await response.json();
       setCollaborator(data.project);
     } catch (error) {
+      setError(error.message);
       console.error(error.message);
     }
   };
@@ -144,6 +160,7 @@ const Home = () => {
         console.error("Logout failed:", error.message);
       }
     } catch (error) {
+      setError(error.message);
       console.error("Error during logout:", error.message);
     }
   };
@@ -168,8 +185,12 @@ const Home = () => {
         setAddMemberModalOpen(false);
         reset();
         fetchProjects();
+      }else{
+        const res = await response.json();
+        setError(res.message);
       }
     } catch (error) {
+      setError(error.message);
       console.error("Error adding collaborator:", error.message);
     }
   };

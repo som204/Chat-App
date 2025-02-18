@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./Routes/user.routes.js";
 import projectRoute from './Routes/project.routes.js'
 import aiRoute from './Routes/ai.routes.js';
+import cloudRoute from './Routes/cloud.routes.js';
 
 connectDB();
 const app = express();
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   next();
 });
+app.use("/cloud",cloudRoute);
 
 app.get("/", (req, res) => {
   res.send("hello world");

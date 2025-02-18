@@ -13,12 +13,13 @@ import { getWebContainer } from "../config/webcontainer";
 import Cookies from "js-cookie";
 import { IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import JSZip from "jszip";
+import JSZip, { file, folder } from "jszip";
 import { saveAs } from "file-saver";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ChatWithEditor = () => {
   const [message, setMessage] = useState("");
@@ -33,6 +34,7 @@ const ChatWithEditor = () => {
   const [runProcess, setRunProcess] = useState(null);
   const [isPreview, setIsPreview] = useState(false);
   const [cmd, setCmd] = useState();
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -52,6 +54,9 @@ const ChatWithEditor = () => {
     }
 
     socketReceiveMessage("project-message", (data) => {
+      if (data.sender === "AI" && data.receiver === user?._id) {
+        setIsDeleted(false);
+      }
       setMessages((prevMessages) => [...prevMessages, data]);
     });
 
@@ -97,16 +102,22 @@ const ChatWithEditor = () => {
   };
 
   useEffect(() => {
-    const aiMessage = [...messages]
-      .reverse()
-      .find((msg) => msg.username === "AI" && msg.receiver === user?._id);
+    let aiMessage;
+    if (!isDeleted) {
+      aiMessage = [...messages]
+        .reverse()
+        .find((msg) => msg.username === "AI" && msg.receiver === user?._id);
+    }
 
     if (aiMessage) {
       try {
         const parsed = parseMessage(aiMessage.text);
         setCmd(parsed.runCommands);
         if (parsed?.fileTree) {
-          setFileTree(parsed?.fileTree);
+          if (!isDeleted) {
+            setFileTree(parsed?.fileTree);
+            handleSaveToCloud(parsed?.fileTree);
+          }
           if (webContainer) {
             webContainer.mount(parsed?.fileTree);
           }
@@ -115,6 +126,7 @@ const ChatWithEditor = () => {
         console.error("Error parsing AI message:", error);
       }
     }
+    aiMessage = null;
   }, [messages, user?._id, webContainer]);
 
   const handleRunCode = async () => {
@@ -229,37 +241,40 @@ const ChatWithEditor = () => {
   };
 
   // Recursive function to render file structure
-  const renderFileStructure = (files, parentDir = "") => {
-    return Object.keys(files).map((fileKey) => {
-      const file = files[fileKey];
-      const isDirectory = file?.directory;
+  const renderFileStructure = (files) => {
+    return (
+      files &&
+      Object.keys(files).map((fileKey) => {
+        const file = files[fileKey];
+        const isDirectory = file?.directory;
 
-      return (
-        <div key={fileKey} className="p-2 m-1">
-          <div
-            onClick={() => {
-              if (isDirectory) {
-                setSelectedFile(null);
-              } else {
-                setSelectedFile(fileKey);
-              }
-            }}
-            className={`cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
-              selectedFile === fileKey ? "bg-blue-500 text-white" : ""
-            }`}
-          >
-            {isDirectory ? `📁 ${fileKey}` : `📄 ${fileKey}`}
-          </div>
-
-          {/* Recursively render directory contents */}
-          {isDirectory && (
-            <div className="ml-4">
-              {renderFileStructure(file.directory, fileKey)}
+        return (
+          <div key={fileKey} className="p-2 m-1">
+            <div
+              onClick={() => {
+                if (isDirectory) {
+                  setSelectedFile(null);
+                } else {
+                  setSelectedFile(fileKey);
+                }
+              }}
+              className={`cursor-pointer rounded-md hover:bg-blue-500 hover:text-white ${
+                selectedFile === fileKey ? "bg-blue-500 text-white" : ""
+              }`}
+            >
+              {isDirectory ? `📁 ${fileKey}` : `📄 ${fileKey}`}
             </div>
-          )}
-        </div>
-      );
-    });
+
+            {/* Recursively render directory contents */}
+            {isDirectory && (
+              <div className="ml-4">
+                {renderFileStructure(file.directory, fileKey)}
+              </div>
+            )}
+          </div>
+        );
+      })
+    );
   };
 
   const createZipFromFileTree = (zip, tree, path = "") => {
@@ -278,6 +293,86 @@ const ChatWithEditor = () => {
     createZipFromFileTree(zip, fileTree);
     const content = await zip.generateAsync({ type: "blob" });
     saveAs(content, "project.zip");
+  };
+
+  const handleSaveToCloud = async (file) => {
+    const username = user.username;
+    const filename = "root";
+    const foldername = projectId;
+    const formData = new FormData();
+    formData.append("file", JSON.stringify(file));
+    formData.append("userName", username);
+    formData.append("fileName", filename);
+    formData.append("folderName", foldername);
+    try {
+      const response = await fetch(`http://localhost:3000/cloud/put`, {
+        method: "PUT",
+        credentials: "include",
+        body: formData,
+      });
+      const data = await response.json(); //httpStatusCode
+      if (data.data.$metadata.httpStatusCode !== 200) {
+        handleSaveToCloud(file);
+      }
+    } catch (error) {
+      console.error("Error saving to cloud:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFileTree = async () => {
+      if (Object.keys(fileTree).length === 0) {
+        const cookiesUsername = JSON.parse(Cookies.get("username"));
+        const username = cookiesUsername.username;
+        const filename = "root";
+        const foldername = projectId;
+        try {
+          const response = await fetch(`http://localhost:3000/cloud/get`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userName: username,
+              fileName: filename,
+              folderName: foldername,
+            }),
+          });
+          const data = await response.json();
+          setFileTree(JSON.parse(data.data));
+        } catch (error) {
+          console.error("Error fetching file tree:", error);
+        }
+      }
+    };
+    fetchFileTree();
+  }, []);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/cloud/delete`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userName: user.username,
+          folderName: projectId,
+          fileName: "root",
+        }),
+      });
+
+      const data = await response.json();
+      if (data.data.$metadata.httpStatusCode === 204) {
+        setFileTree({});
+        renderFileStructure(fileTree);
+        setIsDeleted(true);
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
   };
 
   return (
@@ -345,10 +440,15 @@ const ChatWithEditor = () => {
       <div className="w-1/6 bg-gray-200 shadow-md p-3 overflow-y-auto">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Files</h2>
-          {!(Object.keys(fileTree).length === 0) && (
-            <IconButton color="primary" onClick={handleDownload}>
-              <DownloadIcon />
-            </IconButton>
+          {fileTree && !(Object.keys(fileTree).length === 0) && (
+            <div className="flex space-x-1">
+              <IconButton color="primary" onClick={handleDownload}>
+                <DownloadIcon />
+              </IconButton>
+              <IconButton color="secondary" onClick={handleDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
           )}
         </div>
         <div>{renderFileStructure(fileTree)}</div>
@@ -416,6 +516,7 @@ const ChatWithEditor = () => {
                   newContents
                 );
                 setFileTree(updatedFileTree);
+                handleSaveToCloud(updatedFileTree);
                 if (webContainer) {
                   webContainer.mount(updatedFileTree);
                 }
