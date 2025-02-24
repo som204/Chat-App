@@ -25,6 +25,7 @@ https://codeless.live
 - **Real-time Communication:** WebSockets (Socket.io)
 - **Server & Deployment:** Nginx, PM2 for process management
 - **Cloud Storage** AWS S3
+- **Caching & Optimization** Redis for fast data access
 
 
 ## Backend
