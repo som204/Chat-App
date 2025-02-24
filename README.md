@@ -2,7 +2,10 @@
 
 ## Overview
 
-Codeless is a platform designed to facilitate collaborative software development with a **no-code/low-code** approach. It enables users to create and manage projects efficiently with real-time collaboration features.
+Codeless is a powerful AI-driven no-code/low-code platform that enables seamless collaborative software development. It allows users to create, manage, and deploy projects efficiently while leveraging real-time collaboration and AI-powered automation.
+
+## Deployed
+https://codeless.live
 
 ## Features
 
