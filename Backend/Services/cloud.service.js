@@ -1,3 +1,5 @@
+/* This code snippet is a JavaScript module that interacts with AWS S3 (Simple Storage Service) using
+the AWS SDK for JavaScript. Here's a breakdown of what the code is doing: */
 import {
   S3Client,
   PutObjectCommand,

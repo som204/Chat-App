@@ -6,10 +6,13 @@ const token = Cookies.get("token");
 
 export const initializeSocket = (projectId) => {
   socketInstance = socket("http://localhost:3000", {
+    //path: "/socket",
     auth: {
       token: token
     },
-    query: {projectId}
+    query: { projectId },
+    transports: ["websocket"],
+    //secure: true,
   });
   return socketInstance;
 };

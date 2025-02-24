@@ -340,6 +340,9 @@ const ChatWithEditor = () => {
             }),
           });
           const data = await response.json();
+          if (data.data?.$metadata?.httpStatusCode === 404) {
+            setFileTree({});
+          }
           setFileTree(JSON.parse(data.data));
         } catch (error) {
           console.error("Error fetching file tree:", error);

@@ -1,3 +1,9 @@
+/* The above code is setting up a JavaScript environment to interact with Google's Generative AI
+service. It defines a generative model that acts as a highly advanced development assistant
+specialized in creating professional-grade websites, applications, and development projects. The
+model is responsible for generating code, managing dependencies, providing setup and execution
+instructions, debugging and optimizing code, offering proactive guidance, and communicating
+professionally with the user. */
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_KEY);
@@ -345,6 +351,7 @@ Note: 1) Strictly follow this file structure & the template .
       3) Must include tailwind.config.js,postcss.config.js,vite.config.js for  react app with tailwind.
       4) Must follow the given package.json ... Only if required then modify
       5) Must include type:module
+      6) Must use export default for postcss.config.js only
 
 </Example3>
 

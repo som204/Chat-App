@@ -1,3 +1,5 @@
+/* This JavaScript code is setting up a router using the Express framework for a project management
+application. Here's a breakdown of what each part is doing: */
 import { Router } from "express";
 import { authorization } from "../Middleware/auth.middleware.js";
 import * as projectController from "../Controllers/project.controller.js";

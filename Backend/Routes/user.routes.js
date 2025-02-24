@@ -1,3 +1,5 @@
+/* This JavaScript code is setting up routes for a user authentication system using Express.js. Here is
+a breakdown of what each part does: */
 import * as userController from "../Controllers/user.controller.js";
 import { Router } from "express";
 import { body } from "express-validator";

@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Cookies from "js-cookie";
 import { UserContext } from "../context/user.context";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ const Home = () => {
 
   useEffect(() => {
     if (error) {
-      alert(error);
+      toast.error(error);
       const timer = setTimeout(() => {
         setError(null);
       }, 5000);
@@ -49,6 +51,7 @@ const Home = () => {
     try {
       const response = await fetch("http://localhost:3000/projects/all", {
         credentials: "include",
+        method: "GET",
       });
       if (!response.ok) {
         throw new Error("Failed to fetch projects");
@@ -188,6 +191,7 @@ const Home = () => {
       }else{
         const res = await response.json();
         setError(res.message);
+        
       }
     } catch (error) {
       setError(error.message);
@@ -197,6 +201,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-start">
+      <ToastContainer />
       <button
         onClick={handleLogout}
         className="absolute top-5 right-5 flex items-center bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"

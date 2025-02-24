@@ -1,3 +1,5 @@
+/* This code snippet is setting up a connection to a Redis server using the `ioredis` library in a
+Node.js environment. Here's a breakdown of what each part is doing: */
 import Redis from "ioredis";
 
 

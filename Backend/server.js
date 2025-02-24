@@ -1,3 +1,5 @@
+/* This JavaScript code snippet is setting up a server using Node.js with Socket.IO for real-time
+communication. Here's a breakdown of what the code is doing: */
 import "dotenv/config";
 import http from "http";
 import app from "./app.js";

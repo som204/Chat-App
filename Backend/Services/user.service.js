@@ -1,3 +1,12 @@
+/**
+ * The above code defines functions to create a user with validation and hashing of password, and to
+ * retrieve all users except the one with a specific userId.
+ * @param [user] - The `user` parameter in the `createUser` function is an object that should have
+ * properties for `email`, `username`, and `password`.
+ * @returns The `createUser` function returns the newly created user object if successful, and the
+ * `getAllUser` function returns an array of all users except the one specified by the `userId`
+ * parameter.
+ */
 import userModel from "../Models/user.model.js";
 
 export const createUser = async (user = {}) => {

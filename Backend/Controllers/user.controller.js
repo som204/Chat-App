@@ -1,3 +1,15 @@
+/**
+ * The above code defines controllers for user creation, login, profile retrieval, logout, and getting
+ * all users, handling validation, database operations, and token generation.
+ * @param req - The `req` parameter in your code represents the HTTP request object, which contains
+ * information about the incoming request such as the request headers, body, parameters, and query
+ * strings. It is used to access data sent by the client to the server.
+ * @param res - The `res` parameter in the code snippets you provided stands for the response object in
+ * Express.js. It is used to send a response back to the client making the HTTP request. The response
+ * object (`res`) has methods like `res.status()`, `res.json()`, `res.send()`,
+ * @returns The code provided contains several controller functions for user authentication and
+ * management in a Node.js application. Here is a summary of what each controller function returns:
+ */
 import userModel from "../Models/user.model.js";
 import * as userService from "../Services/user.service.js";
 import { validationResult } from "express-validator";

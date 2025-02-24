@@ -1,3 +1,5 @@
+/* This code snippet is setting up routes for a Node.js application using Express framework. Here's a
+breakdown of what each part is doing: */
 import { Router } from "express";
 import * as cloudController from "../Controllers/cloud.controller.js";
 import { authorization } from "../Middleware/auth.middleware.js";

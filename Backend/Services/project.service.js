@@ -1,3 +1,19 @@
+/**
+ * The above functions are related to managing projects and users in a system, including creating
+ * projects, adding users to projects, getting project details, and deleting users from projects.
+ * @param projectId - The `projectId` parameter refers to the unique identifier of a project. It is
+ * used to identify a specific project in the system.
+ * @param name - The code you provided is a set of functions related to managing projects and users in
+ * a MongoDB database using Mongoose. Here's a brief overview of each function:
+ * @param userId - The `userId` parameter refers to the unique identifier of a user in the system. It
+ * is used to identify and perform operations related to a specific user, such as creating projects,
+ * getting projects associated with the user, adding users to a project, getting project details, and
+ * deleting users from a project.
+ * @returns The code provided contains functions for creating projects, getting all projects for a
+ * specific user, adding users to a project, getting project details including users, and deleting a
+ * user from a project. Each function performs specific tasks related to project and user management
+ * using Mongoose and MongoDB.
+ */
 import mongoose from "mongoose";
 import projectModel from "../Models/project.model.js";
 import userModel from "../Models/user.model.js";
