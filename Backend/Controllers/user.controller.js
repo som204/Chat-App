@@ -70,10 +70,16 @@ export const loginController = async (req, res) => {
   }
 };
 
-export const profileController =async (req,res)=>{
-      res.status(200).json({
-        user:req.user
-      })
+export const profileController = async (req, res) => {
+  try {
+    const user = await userModel.findOne({ email: req.user.email }).lean();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 export const logoutController= async (req,res)=>{
@@ -100,3 +106,25 @@ export const getAllUser =async (req,res)=>{
     
   }
 }
+
+export const updateProfileController = async (req, res) => {
+  const error = validationResult(req);
+  if (!error.isEmpty()) {
+    return res.status(400).json({ error: error.array() });
+  }
+
+  try {
+    const updates = req.body;
+    const user = await userService.updateUserProfile(updates);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    delete user.password;
+    res.status(200).json({ user });
+  } catch (error) {
+    console.log("Controller Error:", error);
+    res.status(400).json({ message: error.message });
+  }
+};

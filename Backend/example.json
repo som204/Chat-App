@@ -1,0 +1,281 @@
+{
+  "FileTree": {
+    "package.json": {
+      "file": {
+        "contents": "{\n  \"name\": \"my-app\",\n  \"version\": \"0.1.0\",\n  \"type\": \"module\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"next lint\"\n  },\n  \"dependencies\": {\n    \"autoprefixer\": \"^10.4.21\",\n    \"next\": \"15.3.5\",\n    \"react\": \"^19.0.0\",\n    \"react-dom\": \"^19.0.0\",\n    \"lucide-react\": \"^0.525.0\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3\",\n    \"postcss\": \"8.4.30\",\n    \"@types/node\": \"^20\",\n    \"@types/react\": \"^19\",\n    \"@types/react-dom\": \"^19\",\n    \"eslint\": \"^9\",\n    \"eslint-config-next\": \"15.3.5\",\n    \"tailwindcss\": \"3.3.3\",\n    \"typescript\": \"^5\"\n  }\n}"
+      }
+    },
+    "tsconfig.json": {
+      "file": {
+        "contents": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2017\",\n    \"lib\": [\"dom\", \"dom.iterable\", \"esnext\"],\n    \"allowJs\": true,\n    \"skipLibCheck\": true,\n    \"strict\": true,\n    \"noEmit\": true,\n    \"esModuleInterop\": true,\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"jsx\": \"preserve\",\n    \"incremental\": true,\n    \"plugins\": [\n      {\n        \"name\": \"next\"\n      }\n    ],\n    \"paths\": {\n      \"@/*\": [\"./src/*\"]\n    }\n  },\n  \"include\": [\"next-env.d.ts\", \"**/*.ts\", \"**/*.tsx\", \".next/types/**/*.ts\"],\n  \"exclude\": [\"node_modules\"]\n}"
+      }
+    },
+    "next.config.ts": {
+      "file": {
+        "contents": "import type { NextConfig } from \"next\";\n\nconst nextConfig: NextConfig = {\n  /* config options here */\n};\n\nexport default nextConfig;"
+      }
+    },
+    "tailwind.config.ts": {
+      "file": {
+        "contents": "import type { Config } from \"tailwindcss\";\n\nconst config: Config = {\n  content: [\"./src/**/*.{js,ts,jsx,tsx,mdx}\"],\n  darkMode: \"class\",\n  theme: {\n    extend: {\n      fontFamily: {\n        sans: [\"Inter\", \"sans-serif\"],\n      },\n      colors: {\n        primary: \"#6366F1\",\n        secondary: \"#EC4899\",\n        accent: \"#10B981\",\n        backgroundLight: \"#F9FAFB\",\n        backgroundDark: \"#111827\",\n        textLight: \"#1F2937\",\n        textDark: \"#F3F4F6\",\n        borderLight: \"#E5E7EB\",\n        borderDark: \"#374151\",\n        error: \"#EF4444\",\n        warning: \"#F59E0B\",\n        success: \"#22C55E\",\n      },\n    },\n  },\n  plugins: [require(\"tailwindcss-animate\")],\n};\n\nexport default config;"
+      }
+    },
+    "postcss.config.mjs": {
+      "file": {
+        "contents": "const config = {\n  plugins: {\n    \"tailwindcss\": {},\n    \"autoprefixer\": {},\n  },\n};\n\nexport default config;"
+      }
+    },
+    "eslint.config.mjs": {
+      "file": {
+        "contents": "import { dirname } from \"path\";\nimport { fileURLToPath } from \"url\";\nimport { FlatCompat } from \"@eslint/eslintrc\";\n\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = dirname(__filename);\n\nconst compat = new FlatCompat({\n  baseDirectory: __dirname,\n});\n\nconst eslintConfig = [\n  ...compat.extends(\"next/core-web-vitals\"),\n];\n\nexport default eslintConfig;"
+      }
+    },
+    ".gitignore": {
+      "file": {
+        "contents": "# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.\n\n# dependencies\n/node_modules\n/.pnp\n.pnp.js\n\n# testing\n/coverage\n\n# next.js\n/.next/\n/out/\n\n# production\n/build\n\n# misc\n.DS_Store\n*.pem\n\n# debug\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n\n# local env files\n.env*.local\n\n# vercel\n.vercel\n\n# typescript\n*.tsbuildinfo"
+      }
+    },
+    "next-env.d.ts": {
+      "file": {
+        "contents": "/// <reference types=\"next\" />\n/// <reference types=\"next/image-types/global\" />\n\n// NOTE: This file should not be edited\n// see https://nextjs.org/docs/basic-features/typescript for more information."
+      }
+    },
+    "README.md": {
+      "file": {
+        "contents": "# Advanced Todo App\n\nA feature-rich personal task management application built with Next.js, Tailwind CSS, and TypeScript. This prototype demonstrates a modern, interactive, and scalable web application with user authentication, task management, and a clean, responsive UI."
+      }
+    },
+    "src": {
+      "directory": {
+        "globals.css": {
+          "file": {
+            "contents": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  @apply bg-backgroundLight text-textLight dark:bg-backgroundDark dark:text-textDark transition-colors duration-300;\n}"
+          }
+        },
+        "app": {
+          "directory": {
+            "layout.tsx": {
+              "file": {
+                "contents": "import type { Metadata } from \"next\";\nimport { Inter } from \"next/font/google\";\nimport \"../globals.css\";\nimport { AuthProvider } from \"@/context/AuthContext\";\nimport Navbar from \"@/components/shared/Navbar\";\nimport Footer from \"@/components/shared/Footer\";\n\nconst inter = Inter({ subsets: [\"latin\"] });\n\nexport const metadata: Metadata = {\n  title: \"Advanced Todo App\",\n  description: \"Organize, prioritize, and track your tasks effortlessly.\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode;\n}>) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body className={`${inter.className} flex flex-col min-h-screen`}>\n        <AuthProvider>\n          <Navbar />\n          <main className=\"flex-grow container mx-auto px-4 py-8\">{children}</main>\n          <Footer />\n        </AuthProvider>\n      </body>\n    </html>\n  );\n}"
+              }
+            },
+            "page.tsx": {
+              "file": {
+                "contents": "import Link from 'next/link';\nimport { CheckCircle, List, Star, Bell, Search, Filter } from 'lucide-react';\nimport Button from '@/components/ui/Button';\n\nexport default function HomePage() {\n  const features = [\n    { icon: CheckCircle, title: 'Task Management', description: 'Easily add, edit, and complete your tasks.' },\n    { icon: Star, title: 'Prioritization', description: 'Set priorities to focus on what matters most.' },\n    { icon: Bell, title: 'Reminders', description: 'Get notified about upcoming deadlines.' },\n    { icon: Filter, title: 'Filter & Search', description: 'Quickly find the tasks you are looking for.' },\n  ];\n\n  return (\n    <div className=\"flex flex-col items-center text-center space-y-16 my-12\">\n      <section className=\"max-w-4xl\">\n        <h1 className=\"text-4xl md:text-5xl font-extrabold tracking-tight text-textLight dark:text-textDark\">Organize Your Life, One Task at a Time</h1>\n        <p className=\"mt-4 text-lg md:text-xl text-gray-600 dark:text-gray-300\">The Advanced Todo App helps you stay focused and productive. Manage tasks, set priorities, and never miss a deadline again.</p>\n        <div className=\"mt-8 flex justify-center gap-4\">\n          <Link href=\"/signup\">\n            <Button size=\"lg\">Get Started</Button>\n          </Link>\n          <Link href=\"/login\">\n            <Button size=\"lg\" variant=\"outline\">Login</Button>\n          </Link>\n        </div>\n      </section>\n\n      <section className=\"w-full max-w-5xl\">\n        <h2 className=\"text-3xl font-bold mb-8\">Features</h2>\n        <div className=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8\">\n          {features.map((feature, index) => (\n            <div key={index} className=\"p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-borderLight dark:border-borderDark transform hover:-translate-y-2 transition-transform duration-300\">\n              <feature.icon className=\"w-10 h-10 text-primary mx-auto mb-4\" />\n              <h3 className=\"text-xl font-semibold mb-2\">{feature.title}</h3>\n              <p className=\"text-gray-600 dark:text-gray-400\">{feature.description}</p>\n            </div>\n          ))}\n        </div>\n      </section>\n    </div>\n  );\n}"
+              }
+            },
+            "dashboard": {
+              "directory": {
+                "layout.tsx": {
+                  "file": {
+                    "contents": "import { ReactNode } from 'react';\n\nexport default function DashboardLayout({ children }: { children: ReactNode }) {\n  return (\n    <div className=\"flex\">\n      {/* Sidebar can be added here */}\n      <main className=\"w-full\">{children}</main>\n    </div>\n  );\n}"
+                  }
+                },
+                "page.tsx": {
+                  "file": {
+                    "contents": "import TaskForm from '@/components/task/TaskForm';\nimport TaskFilterSort from '@/components/task/TaskFilterSort';\nimport TaskCard from '@/components/task/TaskCard';\nimport { Task } from '@/types/task';\n\nconst mockTasks: Task[] = [\n  { id: '1', title: 'Finish project proposal', priority: 'High', isCompleted: false, dueDate: '2025-08-15' },\n  { id: '2', title: 'Buy groceries', priority: 'Medium', isCompleted: true, dueDate: '2025-07-30' },\n  { id: '3', title: 'Call the dentist', priority: 'Low', isCompleted: false },\n];\n\nexport default function DashboardPage() {\n  return (\n    <div className=\"space-y-8\">\n      <h1 className=\"text-3xl font-bold\">Dashboard</h1>\n      <section>\n        <h2 className=\"text-2xl font-semibold mb-4\">Add a New Task</h2>\n        <TaskForm />\n      </section>\n      <section>\n        <h2 className=\"text-2xl font-semibold mb-4\">Your Tasks</h2>\n        <TaskFilterSort />\n        <div className=\"mt-4 space-y-4\">\n          {mockTasks.map(task => (\n            <TaskCard key={task.id} task={task} />\n          ))}\n        </div>\n      </section>\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "tasks": {
+              "directory": {
+                "page.tsx": {
+                  "file": {
+                    "contents": "import TaskFilterSort from '@/components/task/TaskFilterSort';\nimport TaskCard from '@/components/task/TaskCard';\nimport { Task } from '@/types/task';\nimport Button from '@/components/ui/Button';\nimport { Plus } from 'lucide-react';\n\nconst mockTasks: Task[] = [\n  { id: '1', title: 'Design new UI mockups', priority: 'High', isCompleted: false, dueDate: '2025-08-01' },\n  { id: '2', title: 'Develop API endpoints', priority: 'High', isCompleted: false, dueDate: '2025-08-05' },\n  { id: '3', title: 'Client meeting', priority: 'Medium', isCompleted: true, dueDate: '2025-07-29' },\n  { id: '4', title: 'Update documentation', priority: 'Low', isCompleted: false, dueDate: '2025-08-10' },\n];\n\nexport default function TasksPage() {\n  return (\n    <div className=\"space-y-6\">\n      <div className=\"flex justify-between items-center\">\n        <h1 className=\"text-3xl font-bold\">All Tasks</h1>\n        <Button>\n          <Plus className=\"w-4 h-4 mr-2\" />\n          Add New Task\n        </Button>\n      </div>\n      <TaskFilterSort />\n      <div className=\"space-y-4\">\n        {mockTasks.map(task => (\n          <TaskCard key={task.id} task={task} />\n        ))}\n      </div>\n    </div>\n  );\n}"
+                  }
+                },
+                "[taskId]": {
+                  "directory": {
+                    "page.tsx": {
+                      "file": {
+                        "contents": "export default function TaskDetailPage({ params }: { params: { taskId: string } }) {\n  return (\n    <div>\n      <h1 className=\"text-3xl font-bold\">Task Details</h1>\n      <p className=\"mt-4\">Details for task with ID: {params.taskId}</p>\n      {/* TaskForm for editing can be placed here */}\n    </div>\n  );\n}"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "profile": {
+              "directory": {
+                "page.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { useState } from 'react';\nimport Input from '@/components/ui/Input';\nimport Button from '@/components/ui/Button';\nimport Card from '@/components/ui/Card';\nimport { useAuth } from '@/hooks/useAuth';\nimport { User, Sun, Moon } from 'lucide-react';\n\nexport default function ProfilePage() {\n  const { user } = useAuth();\n  const [name, setName] = useState(user?.name || '');\n  const [email, setEmail] = useState(user?.email || '');\n  const [theme, setTheme] = useState('light'); // Mock theme state\n\n  const handleThemeToggle = () => {\n    const newTheme = theme === 'light' ? 'dark' : 'light';\n    setTheme(newTheme);\n    document.documentElement.classList.toggle('dark', newTheme === 'dark');\n  };\n\n  return (\n    <div className=\"max-w-2xl mx-auto\">\n      <h1 className=\"text-3xl font-bold mb-6\">Profile Settings</h1>\n      <Card className=\"p-6\">\n        <form className=\"space-y-6\">\n          <Input label=\"Full Name\" id=\"name\" type=\"text\" value={name} onChange={(e) => setName(e.target.value)} />\n          <Input label=\"Email Address\" id=\"email\" type=\"email\" value={email} onChange={(e) => setEmail(e.target.value)} disabled />\n          <Button>Update Profile</Button>\n        </form>\n      </Card>\n\n      <Card className=\"p-6 mt-8\">\n        <h2 className=\"text-xl font-semibold mb-4\">Change Password</h2>\n        <form className=\"space-y-4\">\n          <Input label=\"Current Password\" id=\"currentPassword\" type=\"password\" />\n          <Input label=\"New Password\" id=\"newPassword\" type=\"password\" />\n          <Input label=\"Confirm New Password\" id=\"confirmPassword\" type=\"password\" />\n          <Button>Change Password</Button>\n        </form>\n      </Card>\n\n      <Card className=\"p-6 mt-8\">\n        <h2 className=\"text-xl font-semibold mb-4\">Preferences</h2>\n        <div className=\"flex items-center justify-between\">\n          <span>Theme</span>\n          <Button onClick={handleThemeToggle} variant=\"ghost\" size=\"sm\" className=\"p-2\">\n            {theme === 'light' ? <Moon className=\"w-5 h-5\" /> : <Sun className=\"w-5 h-5\" />}\n          </Button>\n        </div>\n      </Card>\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "login": {
+              "directory": {
+                "page.tsx": {
+                  "file": {
+                    "contents": "import LoginForm from '@/components/auth/LoginForm';\n\nexport default function LoginPage() {\n  return (\n    <div className=\"flex justify-center items-center\">\n      <LoginForm />\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "signup": {
+              "directory": {
+                "page.tsx": {
+                  "file": {
+                    "contents": "import SignupForm from '@/components/auth/SignupForm';\n\nexport default function SignupPage() {\n  return (\n    <div className=\"flex justify-center items-center\">\n      <SignupForm />\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "about": {
+              "directory": {
+                "page.tsx": {
+                  "file": {
+                    "contents": "import { Info, MessageSquare } from 'lucide-react';\n\nexport default function AboutPage() {\n  return (\n    <div className=\"max-w-3xl mx-auto prose dark:prose-invert lg:prose-xl\">\n      <h1 className=\"flex items-center gap-3\"><Info className=\"w-10 h-10 text-primary\"/> About Advanced Todo App</h1>\n      <h2>Our Mission</h2>\n      <p>Our mission is to provide a simple, yet powerful tool to help you organize your tasks, manage your projects, and ultimately, achieve your goals. We believe that a clear and focused mind is the key to success.</p>\n      <h2>Why Use Our App?</h2>\n      <p>In a world full of distractions, we offer a minimalist and intuitive interface, ensuring that nothing stands between you and your to-do list. With features like prioritization, reminders, and categorization, you can tailor your workflow to your needs.</p>\n      <div className=\"mt-12 p-6 rounded-lg bg-gray-100 dark:bg-gray-800\">\n        <h3 className=\"flex items-center gap-2\"><MessageSquare className=\"w-6 h-6 text-primary\"/> Contact Us</h3>\n        <p>Have questions or feedback? We'd love to hear from you. Reach out to us at <a href=\"mailto:support@advancedtodo.app\">support@advancedtodo.app</a>.</p>\n      </div>\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "error.tsx": {
+              "file": {
+                "contents": "'use client';\n\nimport { AlertTriangle } from 'lucide-react';\nimport Button from '@/components/ui/Button';\n\nexport default function Error({ \n  error, \n  reset \n}: { \n  error: Error & { digest?: string }; \n  reset: () => void \n}) {\n  return (\n    <div className=\"flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center px-4\">\n      <AlertTriangle className=\"w-16 h-16 text-error mb-4\" />\n      <h1 className=\"text-4xl font-bold mb-2\">Something Went Wrong</h1>\n      <p className=\"text-lg text-gray-600 dark:text-gray-400 mb-6\">{error.message || \"An unexpected error occurred.\"}</p>\n      <Button onClick={reset}>Try Again</Button>\n    </div>\n  );\n}"
+              }
+            },
+            "not-found.tsx": {
+              "file": {
+                "contents": "import Link from 'next/link';\nimport { Frown } from 'lucide-react';\nimport Button from '@/components/ui/Button';\n\nexport default function NotFound() {\n  return (\n    <div className=\"flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center px-4\">\n      <Frown className=\"w-16 h-16 text-warning mb-4\" />\n      <h1 className=\"text-6xl font-bold\">404</h1>\n      <h2 className=\"text-2xl font-semibold mb-2\">Page Not Found</h2>\n      <p className=\"text-lg text-gray-600 dark:text-gray-400 mb-6\">Oops! The page you are looking for does not exist.</p>\n      <Link href=\"/\">\n        <Button>Go Back Home</Button>\n      </Link>\n    </div>\n  );\n}"
+              }
+            }
+          }
+        },
+        "components": {
+          "directory": {
+            "shared": {
+              "directory": {
+                "Navbar.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { useState } from 'react';\nimport Link from 'next/link';\nimport { useAuth } from '@/hooks/useAuth';\nimport { Menu, X, ListTodo, User, LogIn, LogOut, Sun, Moon } from 'lucide-react';\nimport Button from '@/components/ui/Button';\n\nexport default function Navbar() {\n  const [isMenuOpen, setIsMenuOpen] = useState(false);\n  const { user, logout } = useAuth();\n  const [theme, setTheme] = useState('light'); // Mock theme state\n\n  const handleThemeToggle = () => {\n    const newTheme = theme === 'light' ? 'dark' : 'light';\n    setTheme(newTheme);\n    document.documentElement.classList.toggle('dark', newTheme === 'dark');\n  };\n\n  const navLinks = [\n    { href: \"/\", label: \"Home\" },\n    { href: \"/dashboard\", label: \"Dashboard\" },\n    { href: \"/tasks\", label: \"Tasks\" },\n    { href: \"/about\", label: \"About\" },\n  ];\n\n  return (\n    <header className=\"sticky top-0 z-50 bg-primary text-white shadow-md\">\n      <nav className=\"container mx-auto px-4 py-3 flex justify-between items-center\">\n        <Link href=\"/\" className=\"flex items-center gap-2 text-xl font-bold\">\n          <ListTodo className=\"w-7 h-7\" />\n          <span>TodoApp</span>\n        </Link>\n        <div className=\"hidden md:flex items-center gap-6\">\n          {navLinks.map(link => (\n            <Link key={link.href} href={link.href} className=\"hover:text-indigo-200 transition-colors\">{link.label}</Link>\n          ))}\n        </div>\n        <div className=\"flex items-center gap-2\">\n          <Button onClick={handleThemeToggle} variant=\"ghost\" size=\"sm\" className=\"p-2 text-white hover:bg-primary/50\">\n            {theme === 'light' ? <Moon className=\"w-5 h-5\" /> : <Sun className=\"w-5 h-5\" />}\n          </Button>\n          <div className=\"hidden md:flex items-center gap-2\">\n            {user ? (\n              <>\n                <Link href=\"/profile\"><Button variant=\"ghost\" size=\"sm\" className=\"text-white hover:bg-primary/50\"><User className=\"w-4 h-4 mr-2\"/>Profile</Button></Link>\n                <Button onClick={logout} variant=\"secondary\" size=\"sm\"><LogOut className=\"w-4 h-4 mr-2\"/>Logout</Button>\n              </>\n            ) : (\n              <>\n                <Link href=\"/login\"><Button variant=\"ghost\" size=\"sm\" className=\"text-white hover:bg-primary/50\"><LogIn className=\"w-4 h-4 mr-2\"/>Login</Button></Link>\n                <Link href=\"/signup\"><Button variant=\"secondary\" size=\"sm\">Sign Up</Button></Link>\n              </>\n            )}\n          </div>\n          <button className=\"md:hidden p-2\" onClick={() => setIsMenuOpen(!isMenuOpen)}>\n            {isMenuOpen ? <X /> : <Menu />}\n          </button>\n        </div>\n      </nav>\n      {isMenuOpen && (\n        <div className=\"md:hidden bg-primary p-4 space-y-2\">\n          {navLinks.map(link => (\n            <Link key={link.href} href={link.href} className=\"block py-2 hover:text-indigo-200 transition-colors\" onClick={() => setIsMenuOpen(false)}>{link.label}</Link>\n          ))}\n          <hr className=\"border-indigo-400\"/>\n          {user ? (\n            <div className=\"flex flex-col gap-2 pt-2\">\n              <Link href=\"/profile\"><Button variant=\"ghost\" className=\"w-full justify-start text-white hover:bg-primary/50\"><User className=\"w-4 h-4 mr-2\"/>Profile</Button></Link>\n              <Button onClick={() => { logout(); setIsMenuOpen(false); }} variant=\"secondary\" className=\"w-full\"><LogOut className=\"w-4 h-4 mr-2\"/>Logout</Button>\n            </div>\n          ) : (\n            <div className=\"flex flex-col gap-2 pt-2\">\n              <Link href=\"/login\"><Button variant=\"ghost\" className=\"w-full justify-start text-white hover:bg-primary/50\"><LogIn className=\"w-4 h-4 mr-2\"/>Login</Button></Link>\n              <Link href=\"/signup\"><Button variant=\"secondary\" className=\"w-full\">Sign Up</Button></Link>\n            </div>\n          )}\n        </div>\n      )}\n    </header>\n  );\n}"
+                  }
+                },
+                "Footer.tsx": {
+                  "file": {
+                    "contents": "import { Github, Twitter, Linkedin } from 'lucide-react';\n\nexport default function Footer() {\n  return (\n    <footer className=\"bg-textLight dark :bg-gray-900 text-white mt-auto\">\n      <div className=\"container mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center\">\n        <p className=\"text-sm text-gray-300\">&copy; {new Date().getFullYear()} Advanced Todo App. All rights reserved.</p>\n        <div className=\"flex gap-4 mt-4 sm:mt-0\">\n          <a href=\"#\" className=\"text-gray-300 hover:text-primary transition-colors\"><Github /></a>\n          <a href=\"#\" className=\"text-gray-300 hover:text-primary transition-colors\"><Twitter /></a>\n          <a href=\"#\" className=\"text-gray-300 hover:text-primary transition-colors\"><Linkedin /></a>\n        </div>\n      </div>\n    </footer>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "ui": {
+              "directory": {
+                "Button.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport React from 'react';\nimport { Loader2 } from 'lucide-react';\n\ninterface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';\n  size?: 'sm' | 'md' | 'lg';\n  isLoading?: boolean;\n}\n\nconst baseStyles = 'inline-flex items-center justify-center font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-backgroundDark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200';\n\nconst variantStyles = {\n  primary: 'bg-primary text-white hover:bg-indigo-500 focus:ring-primary',\n  secondary: 'bg-secondary text-white hover:bg-pink-600 focus:ring-secondary',\n  outline: 'border border-borderLight dark:border-borderDark bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-gray-400',\n  ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-gray-400',\n  danger: 'bg-error text-white hover:bg-red-600 focus:ring-error',\n};\n\nconst sizeStyles = {\n  sm: 'px-3 py-1.5 text-sm',\n  md: 'px-4 py-2 text-base',\n  lg: 'px-6 py-3 text-lg',\n};\n\nconst Button = React.forwardRef<HTMLButtonElement, ButtonProps>(\n  ({ children, variant = 'primary', size = 'md', isLoading = false, className, ...props }, ref) => {\n    return (\n      <button\n        ref={ref}\n        className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}\n        disabled={isLoading || props.disabled}\n        {...props}\n      >\n        {isLoading ? <Loader2 className=\"animate-spin w-5 h-5\" /> : children}\n      </button>\n    );\n  }\n);\n\nButton.displayName = 'Button';\n\nexport default Button;"
+                  }
+                },
+                "Card.tsx": {
+                  "file": {
+                    "contents": "import React from 'react';\n\ninterface CardProps {\n  children: React.ReactNode;\n  className?: string;\n}\n\nexport default function Card({ children, className = '' }: CardProps) {\n  return (\n    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md border border-borderLight dark:border-borderDark ${className}`}>\n      {children}\n    </div>\n  );\n}"
+                  }
+                },
+                "Input.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport React from 'react';\n\ninterface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {\n  label?: string;\n  error?: string;\n}\n\nconst Input = React.forwardRef<HTMLInputElement, InputProps>(\n  ({ label, id, name, type = 'text', error, className, ...props }, ref) => {\n    return (\n      <div className=\"w-full\">\n        {label && <label htmlFor={id || name} className=\"block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1\">{label}</label>}\n        <input\n          ref={ref}\n          id={id || name}\n          name={name}\n          type={type}\n          className={`block w-full px-3 py-2 border border-borderLight rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:border-borderDark dark:placeholder-gray-400 dark:text-white ${error ? 'border-error' : ''} ${className}`}\n          {...props}\n        />\n        {error && <p className=\"mt-1 text-sm text-error\">{error}</p>}\n      </div>\n    );\n  }\n);\n\nInput.displayName = 'Input';\n\nexport default Input;"
+                  }
+                },
+                "Modal.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { X } from 'lucide-react';\nimport React from 'react';\nimport Card from './Card';\n\ninterface ModalProps {\n  isOpen: boolean;\n  onClose: () => void;\n  title: string;\n  children: React.ReactNode;\n}\n\nexport default function Modal({ isOpen, onClose, title, children }: ModalProps) {\n  if (!isOpen) return null;\n\n  return (\n    <div className=\"fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 transition-opacity duration-300\" onClick={onClose}>\n      <Card className=\"w-full max-w-md p-6 relative animate-in fade-in-0 zoom-in-95\" onClick={(e) => e.stopPropagation()}>\n        <div className=\"flex justify-between items-center mb-4\">\n          <h3 className=\"text-xl font-semibold\">{title}</h3>\n          <button onClick={onClose} className=\"p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700\">\n            <X className=\"w-5 h-5\" />\n          </button>\n        </div>\n        <div>{children}</div>\n      </Card>\n    </div>\n  );\n}"
+                  }
+                },
+                "LoadingSpinner.tsx": {
+                  "file": {
+                    "contents": "import { Loader2 } from 'lucide-react';\n\nexport default function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {\n  const sizeClasses = {\n    sm: 'w-6 h-6',\n    md: 'w-8 h-8',\n    lg: 'w-12 h-12',\n  };\n\n  return (\n    <div className=\"flex justify-center items-center\">\n      <Loader2 className={`animate-spin text-primary ${sizeClasses[size]}`} />\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "task": {
+              "directory": {
+                "TaskCard.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { Task } from '@/types/task';\nimport Card from '@/components/ui/Card';\nimport Button from '@/components/ui/Button';\nimport { Edit, Trash2, CheckCircle, Circle, Calendar } from 'lucide-react';\nimport { useState } from 'react';\n\ninterface TaskCardProps {\n  task: Task;\n}\n\nconst priorityClasses: { [key: string]: string } = {\n  High: 'border-l-4 border-error',\n  Medium: 'border-l-4 border-warning',\n  Low: 'border-l-4 border-success',\n};\n\nexport default function TaskCard({ task }: TaskCardProps) {\n  const [isCompleted, setIsCompleted] = useState(task.isCompleted);\n\n  return (\n    <Card className={`p-4 flex items-start gap-4 transition-all hover:shadow-lg ${isCompleted ? 'opacity-60' : ''} ${priorityClasses[task.priority]}`}>\n      <button onClick={() => setIsCompleted(!isCompleted)} className=\"mt-1\">\n        {isCompleted ? <CheckCircle className=\"w-6 h-6 text-primary\" /> : <Circle className=\"w-6 h-6 text-gray-400\" />}\n      </button>\n      <div className=\"flex-grow\">\n        <p className={`font-semibold ${isCompleted ? 'line-through' : ''}`}>{task.title}</p>\n        {task.dueDate && (\n          <p className=\"text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1\">\n            <Calendar className=\"w-4 h-4\" />\n            {task.dueDate}\n          </p>\n        )}\n      </div>\n      <div className=\"flex items-center gap-1\">\n        <Button variant=\"ghost\" size=\"sm\"><Edit className=\"w-4 h-4\" /></Button>\n        <Button variant=\"ghost\" size=\"sm\" className=\"text-error hover:bg-red-100 dark:hover:bg-red-900/50\"><Trash2 className=\"w-4 h-4\" /></Button>\n      </div>\n    </Card>\n  );\n}"
+                  }
+                },
+                "TaskForm.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { useState } from 'react';\nimport Input from '@/components/ui/Input';\nimport Button from '@/components/ui/Button';\nimport { Calendar, Tag } from 'lucide-react';\n\nexport default function TaskForm() {\n  const [title, setTitle] = useState('');\n\n  const handleSubmit = (e: React.FormEvent) => {\n    e.preventDefault();\n    if (!title.trim()) return;\n    console.log('Adding task:', title);\n    setTitle('');\n  };\n\n  return (\n    <form onSubmit={handleSubmit} className=\"p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4\">\n      <Input \n        value={title}\n        onChange={(e) => setTitle(e.target.value)}\n        placeholder=\"Add a new task...\"\n        className=\"flex-grow bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600\"\n      />\n      <div className=\"flex flex-wrap gap-4\">\n        <Input type=\"date\" label=\"Due Date\" className=\"w-full sm:w-auto\"/>\n        <div className=\"w-full sm:w-auto\">\n          <label className=\"block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1\">Priority</label>\n          <select className=\"block w-full px-3 py-2 border border-borderLight rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:border-borderDark dark:placeholder-gray-400 dark:text-white\">\n            <option>Low</option>\n            <option>Medium</option>\n            <option>High</option>\n          </select>\n        </div>\n        <Input label=\"Tags\" placeholder=\"e.g. work, personal\" className=\"w-full sm:w-auto flex-grow\"/>\n      </div>\n      <Button type=\"submit\" className=\"w-full sm:w-auto\">Add Task</Button>\n    </form>\n  );\n}"
+                  }
+                },
+                "TaskFilterSort.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { Search, Filter, SortAsc } from 'lucide-react';\nimport Input from '@/components/ui/Input';\n\nexport default function TaskFilterSort() {\n  return (\n    <div className=\"p-4 bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col md:flex-row gap-4\">\n      <div className=\"relative flex-grow\">\n        <Search className=\"absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400\" />\n        <Input placeholder=\"Search tasks...\" className=\"pl-10 w-full\" />\n      </div>\n      <div className=\"flex gap-4\">\n        <select className=\"w-full md:w-auto block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white\">\n          <option>Filter by Priority</option>\n          <option>High</option>\n          <option>Medium</option>\n          <option>Low</option>\n        </select>\n        <select className=\"w-full md:w-auto block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white\">\n          <option>Sort by</option>\n          <option>Due Date</option>\n          <option>Priority</option>\n        </select>\n      </div>\n    </div>\n  );\n}"
+                  }
+                }
+              }
+            },
+            "auth": {
+              "directory": {
+                "LoginForm.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { useState } from 'react';\nimport { useRouter } from 'next/navigation';\nimport { useAuth } from '@/hooks/useAuth';\nimport Input from '@/components/ui/Input';\nimport Button from '@/components/ui/Button';\nimport Card from '@/components/ui/Card';\nimport Link from 'next/link';\nimport { Mail, Lock } from 'lucide-react';\n\nexport default function LoginForm() {\n  const [email, setEmail] = useState('');\n  const [password, setPassword] = useState('');\n  const [error, setError] = useState('');\n  const { login, isLoading } = useAuth();\n  const router = useRouter();\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault();\n    setError('');\n    try {\n      await login(email, password);\n      router.push('/dashboard');\n    } catch (err) {\n      setError('Failed to log in. Please check your credentials.');\n    }\n  };\n\n  return (\n    <Card className=\"w-full max-w-sm p-8 space-y-6\">\n      <div className=\"text-center\">\n        <h2 className=\"text-2xl font-bold\">Welcome Back!</h2>\n        <p className=\"text-gray-500 dark:text-gray-400\">Sign in to continue.</p>\n      </div>\n      <form onSubmit={handleSubmit} className=\"space-y-4\">\n        {error && <p className=\"text-sm text-error text-center\">{error}</p>}\n        <Input label=\"Email\" id=\"email\" type=\"email\" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=\"you@example.com\" />\n        <Input label=\"Password\" id=\"password\" type=\"password\" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder=\"••••••••\" />\n        <Button type=\"submit\" isLoading={isLoading} className=\"w-full\">Log In</Button>\n      </form>\n      <p className=\"text-center text-sm text-gray-500 dark:text-gray-400\">\n        Don't have an account?{' '}\n        <Link href=\"/signup\" className=\"font-medium text-primary hover:underline\">Sign up</Link>\n      </p>\n    </Card>\n  );\n}"
+                  }
+                },
+                "SignupForm.tsx": {
+                  "file": {
+                    "contents": "'use client';\n\nimport { useState } from 'react';\nimport { useRouter } from 'next/navigation';\nimport { useAuth } from '@/hooks/useAuth';\nimport Input from '@/components/ui/Input';\nimport Button from '@/components/ui/Button';\nimport Card from '@/components/ui/Card';\nimport Link from 'next/link';\nimport { UserPlus, Mail, Lock } from 'lucide-react';\n\nexport default function SignupForm() {\n  const [name, setName] = useState('');\n  const [email, setEmail] = useState('');\n  const [password, setPassword] = useState('');\n  const [error, setError] = useState('');\n  const { signup, isLoading } = useAuth();\n  const router = useRouter();\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault();\n    setError('');\n    try {\n      await signup(name, email, password);\n      router.push('/dashboard');\n    } catch (err) {\n      setError('Failed to create an account. Please try again.');\n    }\n  };\n\n  return (\n    <Card className=\"w-full max-w-sm p-8 space-y-6\">\n      <div className=\"text-center\">\n        <h2 className=\"text-2xl font-bold\">Create an Account</h2>\n        <p className=\"text-gray-500 dark:text-gray-400\">Start organizing your tasks today.</p>\n      </div>\n      <form onSubmit={handleSubmit} className=\"space-y-4\">\n        {error && <p className=\"text-sm text-error text-center\">{error}</p>}\n        <Input label=\"Full Name\" id=\"name\" type=\"text\" value={name} onChange={(e) => setName(e.target.value)} required placeholder=\"John Doe\" />\n        <Input label=\"Email\" id=\"email\" type=\"email\" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=\"you@example.com\" />\n        <Input label=\"Password\" id=\"password\" type=\"password\" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder=\"••••••••\" />\n        <Button type=\"submit\" isLoading={isLoading} className=\"w-full\">Sign Up</Button>\n      </form>\n      <p className=\"text-center text-sm text-gray-500 dark:text-gray-400\">\n        Already have an account?{' '}\n        <Link href=\"/login\" className=\"font-medium text-primary hover:underline\">Log in</Link>\n      </p>\n    </Card>\n  );\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "context": {
+          "directory": {
+            "AuthContext.tsx": {
+              "file": {
+                "contents": "'use client';\n\nimport { createContext, useState, useEffect, ReactNode } from 'react';\nimport { useLocalStorage } from '@/hooks/useLocalStorage';\nimport { AuthContextType, User } from '@/types/auth';\n\nexport const AuthContext = createContext<AuthContextType | undefined>(undefined);\n\nexport function AuthProvider({ children }: { children: ReactNode }) {\n  const [user, setUser] = useState<User | null>(null);\n  const [token, setToken] = useLocalStorage<string | null>('authToken', null);\n  const [isLoading, setIsLoading] = useState(false);\n\n  useEffect(() => {\n    if (token) {\n      // In a real app, verify token with backend and fetch user data\n      setUser({ id: '1', name: 'Demo User', email: 'user@example.com' });\n    } else {\n      setUser(null);\n    }\n  }, [token]);\n\n  const login = async (email: string, password: string): Promise<void> => {\n    setIsLoading(true);\n    return new Promise((resolve, reject) => {\n      setTimeout(() => {\n        if (email && password) {\n          const fakeToken = 'fake-jwt-token';\n          setToken(fakeToken);\n          setUser({ id: '1', name: 'Demo User', email });\n          setIsLoading(false);\n          resolve();\n        } else {\n          setIsLoading(false);\n          reject(new Error('Invalid credentials'));\n        }\n      }, 1000);\n    });\n  };\n\n  const signup = async (name: string, email: string, password: string): Promise<void> => {\n    setIsLoading(true);\n    return new Promise((resolve, reject) => {\n      setTimeout(() => {\n        if (name && email && password) {\n          const fakeToken = 'fake-jwt-token-new';\n          setToken(fakeToken);\n          setUser({ id: '2', name, email });\n          setIsLoading(false);\n          resolve();\n        } else {\n          setIsLoading(false);\n          reject(new Error('Invalid signup data'));\n        }\n      }, 1000);\n    });\n  };\n\n  const logout = () => {\n    setToken(null);\n    setUser(null);\n  };\n\n  const value = { user, login, signup, logout, isLoading };\n\n  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;\n}"
+              }
+            }
+          }
+        },
+        "hooks": {
+          "directory": {
+            "useAuth.ts": {
+              "file": {
+                "contents": "'use client';\n\nimport { useContext } from 'react';\nimport { AuthContext } from '@/context/AuthContext';\nimport { AuthContextType } from '@/types/auth';\n\nexport const useAuth = (): AuthContextType => {\n  const context = useContext(AuthContext);\n  if (context === undefined) {\n    throw new Error('useAuth must be used within an AuthProvider');\n  }\n  return context;\n};"
+              }
+            },
+            "useLocalStorage.ts": {
+              "file": {
+                "contents": "'use client';\n\nimport { useState, useEffect } from 'react';\n\nfunction getStorageValue<T>(key: string, defaultValue: T): T {\n  if (typeof window === 'undefined') {\n    return defaultValue;\n  }\n  const saved = localStorage.getItem(key);\n  try {\n    return saved ? JSON.parse(saved) : defaultValue;\n  } catch (error) {\n    console.error('Error parsing JSON from localStorage', error);\n    return defaultValue;\n  }\n}\n\nexport function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {\n  const [storedValue, setStoredValue] = useState<T>(() => {\n    return getStorageValue(key, initialValue);\n  });\n\n  useEffect(() => {\n    if (typeof window !== 'undefined') {\n      localStorage.setItem(key, JSON.stringify(storedValue));\n    }\n  }, [key, storedValue]);\n\n  return [storedValue, setStoredValue];\n}"
+              }
+            }
+          }
+        },
+        "types": {
+          "directory": {
+            "auth.ts": {
+              "file": {
+                "contents": "export interface User {\n  id: string;\n  name: string;\n  email: string;\n}\n\nexport interface AuthContextType {\n  user: User | null;\n  login: (email: string, password: string) => Promise<void>;\n  signup: (name: string, email: string, password: string) => Promise<void>;\n  logout: () => void;\n  isLoading:  boolean;\n}"
+              }
+            },
+            "task.ts": {
+              "file": {
+                "contents": "export type Priority = 'High' | 'Medium' | 'Low';\n\nexport interface Task {\n  id: string;\n  title: string;\n  description?: string;\n  isCompleted: boolean;\n  priority: Priority;\n  dueDate?: string;\n  tags?: string[];\n}"
+              }
+            }
+          }
+        },
+        "utils": {
+          "directory": {
+            "api.ts": {
+              "file": {
+                "contents": "// This file would contain functions to interact with a backend API.\n// For this prototype, we'll use mock data and promises.\n\nimport { Task } from '@/types/task';\n\nexport const fetchTasks = async (): Promise<Task[]> => {\n  console.log('Fetching tasks...');\n  return Promise.resolve([]);\n};\n\nexport const createTask = async (task: Omit<Task, 'id'>): Promise<Task> => {\n  console.log('Creating task...', task);\n  const newTask = { ...task, id: new Date().toISOString() };\n  return Promise.resolve(newTask);\n};"
+              }
+            },
+            "helpers.ts": {
+              "file": {
+                "contents": "export const formatDate = (dateString: string): string => {\n  return new Date(dateString).toLocaleDateString('en-US', {\n    year: 'numeric',\n    month: 'long',\n    day: 'numeric',\n  });\n};\n\nexport const validateEmail = (email: string): boolean => {\n  const re = /^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$/;\n  return re.test(String(email).toLowerCase());\n};"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

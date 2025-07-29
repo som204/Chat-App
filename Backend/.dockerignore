@@ -1,0 +1,30 @@
+# Ignore the node_modules folder.
+# Dependencies are installed inside the container via 'npm install',
+# so we don't need to copy the local version.
+node_modules
+
+# Ignore all environment files.
+# These contain secrets and should be provided to the container at runtime,
+# not built into the image.
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Ignore log files, which are generated during runtime.
+npm-debug.log
+yarn-error.log
+*.log
+
+# Ignore common IDE and editor configuration folders.
+.vscode
+.idea
+
+# Ignore the git folder.
+.git
+.gitignore
+
+# Ignore operating system specific files.
+.DS_Store
+Thumbs.db

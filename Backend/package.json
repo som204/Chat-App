@@ -13,6 +13,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.749.0",
     "@google/generative-ai": "^0.21.0",
+    "@huggingface/inference": "^4.5.3",
+    "@langchain/community": "^0.3.49",
+    "@langchain/core": "^0.3.66",
+    "@langchain/google-genai": "^0.2.13",
+    "@langchain/langgraph": "^0.3.8",
+    "@langchain/mcp-adapters": "^0.6.0",
     "bcrypt": "^5.1.1",
     "compile-run": "^2.3.4",
     "cookie-parser": "^1.4.7",
@@ -23,9 +29,13 @@
     "express-validator": "^7.2.1",
     "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
+    "langchain": "^0.3.29",
+    "mcp-use": "^0.0.8",
     "mongoose": "^8.9.5",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.76"
   }
 }

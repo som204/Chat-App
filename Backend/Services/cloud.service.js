@@ -46,11 +46,11 @@ export const getFile = async (userName, folderName, fileName) => {
         stream.on("error", reject);
         stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
       });
-
     return streamToString(data.Body);
+    
   } catch (error) {
-    console.log(error);
-    return null;
+    // console.log(error);
+    return "";
   }
 };
 

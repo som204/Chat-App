@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. The Backend Service (Your Node.js App)
+  backend:
+    build: ./Backend
+    env_file: ./.env
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+    # This is the corrected section.
+    # It ensures mongo and redis start before the backend.
+    depends_on:
+      - mongo
+      - redis
+    restart: unless-stopped
+
+  # 2. The Frontend Service (Your Vite/React App)
+  # This container just builds the files and waits. Nginx will serve them.
+  frontend:
+    build: ./Frontend
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # 3. The Nginx Reverse Proxy (The main entry point for all traffic)
+  nginx:
+    image: nginx:1.29.0-alpine
+    ports:
+      - "80:80"   # Public-facing port
+      - "443:443" # For SSL later
+    volumes:
+      # Mount the Nginx configuration file
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs:ro
+      # Mount the built static files from the frontend container
+      - ./Frontend/dist:/usr/share/nginx/html
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+  # 4. The MongoDB Database Service
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  # 5. The Redis Caching Service
+  redis:
+    image: redis:7.4
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

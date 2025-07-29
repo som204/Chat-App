@@ -29,6 +29,14 @@ router.post('/login',
 
 router.get('/profile',authorization,userController.profileController);
 
+router.patch(
+  '/updateProfile',
+  authorization,
+  body("username").optional().isLength({ min: 5 }).withMessage("Username Must be at least 5"),
+  body("email").optional().isEmail().withMessage("Email Must Be Valid"),
+  userController.updateProfileController
+);
+
 router.get('/logout',authorization,userController.logoutController);
 
 router.get('/all',authorization,userController.getAllUser);

@@ -42,3 +42,27 @@ export const getAllUser = async ({userId})=>{
     throw new Error(error.message);
   }
 }
+
+export const updateUserProfile = async ({userId,fullname, college, organisation, bio, githubtoken }) => {
+  try {
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+    const updateFields = {};
+    if (fullname !== undefined) updateFields.fullname = fullname;
+    if (college !== undefined) updateFields.college = college;
+    if (organisation !== undefined) updateFields.organisation = organisation;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (githubtoken !== undefined) updateFields.githubtoken = githubtoken;
+
+    const result = await userModel.findByIdAndUpdate(
+      userId,
+      { $set: updateFields },
+      { new: true }
+    );
+    return result;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw new Error(error.message || "An error occurred while updating the user profile.");
+  }
+};

@@ -19,6 +19,35 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  fullname: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  college: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  organisation: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  bio: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  githubtoken: {
+    type: String,
+    required: false,
+  },
+  githublinkstatus: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 userSchema.statics.hashPassword = async function (password) {

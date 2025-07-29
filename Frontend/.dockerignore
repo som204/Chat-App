@@ -1,0 +1,33 @@
+# Ignore the node_modules folder.
+# Dependencies are installed inside the container via 'npm install'.
+node_modules
+
+# Ignore the local build output directory.
+# The Dockerfile generates this folder ('dist') inside the container during the build stage.
+dist
+.vite
+
+# Ignore all environment files.
+# These contain secrets and should not be built into the image.
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Ignore log files, which are generated during runtime.
+npm-debug.log
+yarn-error.log
+*.log
+
+# Ignore common IDE and editor configuration folders.
+.vscode
+.idea
+
+# Ignore the git folder.
+.git
+.gitignore
+
+# Ignore operating system specific files.
+.DS_Store
+Thumbs.db
