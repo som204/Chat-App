@@ -720,7 +720,7 @@ Note: Your every response should be unique and based on the user prompt and the 
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.5-flash",
   temperature: 1.0,
-  key : "AIzaSyDqdqxoiKViVFYpuKXAVtOAFSAdr3DthK8",
+  key : process.env.GOOGLE_API_KEY_2,
 });
 const memory = new MemorySaver();
 
