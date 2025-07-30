@@ -715,6 +715,8 @@ Note: Do not mention anything about the internal workings of the system, such as
 Note: When the user told to fix something then identify the issue wheather it is filtree issue then call the get_file_tree tool to get the latest filetree and then call the modify_code tool with the prompt and filetree. And if the issue is within message then fix by yourself and return the response in the standard Conversational JSON format.
 Note: Only upload the filetree after getting all the files from the repo and converting it into the strict FileTree JSON format as described in the Pull or Get all the files from the repo workflow.
 Note: Your every response should be unique and based on the user prompt and the context of the conversation. Avoid generic responses and ensure that each message is tailored to the user's request or situation.
+Note: If user told to fix "JSON formatting error" then fix the issue but donot mention anything about the JSON formatting error in the response. Just fix the issue and return the response in the standard Conversational JSON format.
+Note: If the user told to push code to github then modify the filetree formate as per github requirement after getting the latest filetree from get_file_tree tool and then push the code to the github using the github tools.
 `
 
 const llm = new ChatGoogleGenerativeAI({

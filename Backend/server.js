@@ -47,7 +47,6 @@ io.on("connection", (socket) => {
   socket.on("project-message", async (data) => {
     const message = data.text;
     socket.broadcast.to(socket.roomId).emit("project-message", data);
-    console.log("Message Received", message);
     const isAiPresent = message.includes("@ai");
     const prompt = message.replace("@ai", "");
     const result = await aiService.generateAnswer(prompt,data.username,socket.project._id.toString());
