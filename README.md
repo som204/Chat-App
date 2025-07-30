@@ -1,368 +1,137 @@
-# CodeLess
+<div align="center">  
+  <h1 align="center">  
+    <span style="font-family: monospace; font-size: 36px; font-weight: bold;">Code</span><span style="font-family: monospace; font-size: 36px; font-weight: 300; color: #6b7280;">Less</span>  
+  </h1>  
+  <p align="center">  
+    Build at the Speed of Thought. An AI‑powered, collaborative workspace that turns your ideas into production‑ready code.  
+    <br />   
+    <a href="https://codeless.live">View Demo</a> 
+  </p>  
+</div>
 
-## Overview
-
-Codeless is a powerful AI-driven no-code/low-code platform that enables seamless collaborative software development. It allows users to create, manage, and deploy projects efficiently while leveraging real-time collaboration and AI-powered automation.
-
-## Deployed
-https://codeless.live
-
-## Features
-
-- **Live Collaboration:** Users can edit and manage projects in real time.
-- **WebSockets Integration:** Ensures instant updates and seamless interaction.
-- **Secure API Communication:** Uses JWT authentication for secure access.
-- **Customizable Components:** Provides reusable UI components for faster development.
-- **Built-in Deployment:** Allows easy project hosting and management.
-- **AI-Powered Assistance** Get intelligent code suggestions, auto-completions, and debugging insights.
-
-## Tech Stack
-
-- **Frontend:** React, Vite, TailwindCSS, Material-UI, React Icons
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB (via Mongoose ORM)
-- **Authentication:** JWT-based authentication
-- **Real-time Communication:** WebSockets (Socket.io)
-- **Server & Deployment:** Nginx, PM2 for process management
-- **Cloud Storage** AWS S3
-- **Caching & Optimization** Redis for fast data access
+---
 
 
-## Backend
+## 📖 About The Project
 
-### File Structure
-```
-📂 Backend
-│── 📄 .env
-│── 📄 .gitignore
-│── 📄 app.js
-│── 📄 package.json
-│── 📄 server.js
-│
-├── 📂 Controllers
-│   ├── 📄 ai.controller.js
-│   ├── 📄 cloud.controller.js
-│   ├── 📄 project.controller.js
-│   ├── 📄 user.controller.js
-│
-├── 📂 Db
-│   ├── 📄 db.js
-│
-├── 📂 Middleware
-│   ├── 📄 auth.middleware.js
-│
-├── 📂 Models
-│   ├── 📄 project.model.js
-│   ├── 📄 user.model.js
-│
-├── 📂 Routes
-│   ├── 📄 ai.routes.js
-│   ├── 📄 cloud.routes.js
-│   ├── 📄 project.routes.js
-│   ├── 📄 user.routes.js
-│
-├── 📂 Services
-│   ├── 📄 ai.service.js
-│   ├── 📄 cloud.service.js
-│   ├── 📄 project.service.js
-│   ├── 📄 redis.service.js
-│   ├── 📄 user.service.js
-```
+**Codeless** is a powerful AI-driven no-code/low-code platform that enables seamless collaborative software development. It combines the power of a **Gemini-powered AI assistant** with real-time, multi-user collaboration, all running in a sandboxed browser environment powered by **WebContainers**.
 
-## Environment Variables
+Whether you're a solo developer prototyping an idea or a team building a complex application, Codeless provides the tools to go from concept to live preview in minutes. **Stop scaffolding, and start creating.**
 
-The following environment variables need to be set for the backend to function correctly:
+---
 
-| Variable Name      | Description                          |
-|--------------------|--------------------------------------|
-| `MONGO_URI`       | MongoDB connection string           |
-| `JWT_SECRET`      | Secret key for JWT authentication   |
-| `AWS_ACCESS_KEY`  | AWS access key for S3               |
-| `AWS_SECRET_KEY`  | AWS secret key for S3               |
-| `AWS_BUCKET_NAME` | AWS S3 bucket name                  |
-| `GOOGLE_AI_KEY`   | Google AI API key                   |
-| `REDIS_HOST`      | Redis server host                   |
-| `REDIS_PORT`      | Redis server port                   |
-| `REDIS_PASSWORD`  | Redis server password               |
+## ✨ Key Features
 
-Make sure to configure these variables in your `.env` file before running the project.
+* **🤖 AI Co-pilot:** Use the `@ai` prefix in the chat to prompt the AI. Generate components, write functions, debug code, or build entire application structures with natural language.
+* **👥 Real-time Collaboration:** Invite your team to a project and code together in the same editor. See cursors, selections, and changes live, just like in Google Docs.
+* **⚡ Instant Live Preview:** Every change is instantly hot-reloaded in a live preview pane, powered by WebContainers. No more context switching or manual refreshes.
+* **💬 Integrated Chat:** Each project has a dedicated chat room for seamless communication with your collaborators and the AI.
+* **📁 Cloud-Synced File System:** A fully-featured file explorer allows you to create, rename, and delete files and folders, which are automatically synced to AWS S3.
+* **💅 Modern UI/UX:** A beautiful, responsive interface with a persistent black and white theme and a dark mode toggle, built with **shadcn/ui** and **magic-ui**.
+* **🔗 GitHub Integration:** Seamlessly interact with your GitHub repositories by simply commanding the AI. Clone, commit, push, create branches, and manage pull requests—all through natural language instructions.
 
-## Frontend
+---
+## 🧩 Live Demo
 
-### File Structure
+<div align="center">
 
-Frontend File Structure:
-```
-📂 public
-│   📄 favicon.ico
-│   📄 index.html
-│   📄 robots.txt
-📂 src
-│   📂 components
-│   │   📄 Chat.jsx
-│   │   📄 Home.jsx
-│   │   └── ...
-│   📂 context
-│   │   📄 user.context.js
-│   📂 config
-│   │   📄 socket.js
-│   📄 App.jsx
-│   📄 index.css
-│   📄 main.jsx
-│   └── ...
-📄 .gitignore
-📄 package.json
-📄 README.md
-📄 vite.config.js
-```
-## Installation
+[![Live Demo](https://img.shields.io/badge/🚀%20Try%20Codeless%20Live-Click%20Here-4F46E5?style=for-the-badge&logo=vercel&logoColor=white)](https://codeless.live)
+
+<br />
+
+Experience **Codeless** in action—no installation required.  
+Click the button above to launch the live workspace and start building instantly!
+
+</div>
+
+---
+
+## 🛠️ Tech Stack
+
+This project leverages a modern and powerful tech stack to deliver a seamless user experience.
+
+| Category                | Technology                                                                                                  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Frontend** | [React](https://reactjs.org/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Framer Motion](https://www.framer.com/motion/) |
+| **Backend** | [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)                                         |
+| **Real-time** | [Socket.IO](https://socket.io/), [Redis](https://redis.io/)                                                  |
+| **In-Browser Environment**| [WebContainers](https://webcontainers.io/) by StackBlitz                                                    |
+| **Database** | [MongoDB](https://www.mongodb.com/)                                                                         |
+| **Authentication** | JWT, Cookies                                                                                                |
+| **Cloud Storage** | [AWS S3](https://aws.amazon.com/s3/)                                                                        |
+| **AI Integration** | [Google Gemini](https://ai.google.dev/gemini-api/docs)                                                      |
+| **Deployment** | [Docker](https://www.docker.com/), [GitHub Actions](https://github.com/features/actions) |
+
+---
+
+## 🚀 Getting Started
+
+To get a local copy up and running, follow these simple steps. We recommend using Docker for the simplest setup.
 
 ### Prerequisites
 
-- Node.js
-- MongoDB
+* **Node.js** (v18 or later)
+* **npm**
+* **Docker** and **Docker Compose**
 
-### Steps
+### Installation & Setup
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-repo/codeless.git
-   cd Backend
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory and configure in both Backend and Frontend
+1.  **Clone the repository**
+    ```sh
+    git clone https://github.com/som204/Chat-App.git
+    cd your-repo
+    ```
 
-4. **Run the server:**
-   ```bash
-   npm server.js
-   ```
-5. **Run the frontend:**
-   ```bash
-   cd Frontend
-   npm install
-   npm run dev
-   ```
+2.  **Set up your environment variables**
+    Create a `.env` file in the root directory by copying the example file:
+    ```sh
+    cp .env.example .env
+    ```
+    Now, open the `.env` file and add your configuration keys:
+    ```env
+    # MongoDB
+    MONGO_URI=your_mongo_uri_here
+    JWT_SECRET=your_jwt_secret_here
 
-## Screenshots
+    # Redis
+    REDIS_PASSWORD=your_redis_password_here
+    REDIS_HOST=your_redis_host_here
+    REDIS_PORT=your_redis_port_here
 
-### Homepage
-![codeless live_](https://github.com/user-attachments/assets/f402ef24-259b-4230-8c11-2822d97a1655)
+    # Google & AI
+    GOOGLE_API_KEY=your_google_api_key_here
+    GOOGLE_API_KEY_2=your_google_api_key_2_here
+    GOOGLE_CSE_ID=your_google_cse_id_here
 
-### Project Dashboard
-![codeless live_home](https://github.com/user-attachments/assets/247434c7-5107-4328-966a-2d88082f1abd)
+    # AWS S3
+    AWS_ACCESS_KEY=your_aws_access_key_here
+    AWS_SECRET_KEY=your_aws_secret_key_here
+    AWS_BUCKET_NAME=your_aws_bucket_name_here
+    ```
 
-### Chat Room
-![codeless live_home (1)](https://github.com/user-attachments/assets/83c0c94d-fb51-4673-81fc-86fbb9fe1d70)
-![codeless live_chat_67b9cbb8c5f3b7ac44aa879b](https://github.com/user-attachments/assets/ddf3acdf-6f18-4f8d-9fbf-33a576e2f639)
-![codeless live_chat_67b9cbb8c5f3b7ac44aa879b (1)](https://github.com/user-attachments/assets/fd33aacd-0cf9-431d-aa1f-e52d5968bc3e)
+3.  **Build and run with Docker**
+    This is the recommended method as it handles all dependencies and services.
+    ```sh
+    docker compose up --build
+    ```
 
-### Login
-![codeless live_login](https://github.com/user-attachments/assets/8c9e0c50-f192-46c3-9331-bf4fa050df23)
+The application should now be running and accessible at `http://localhost`.
 
-### Register
-![codeless live_register](https://github.com/user-attachments/assets/17f776fe-50e8-4df1-8cf8-1afc97b000a2)
+---
 
+## 🎥 Video Demonstration
 
+Watch a quick walkthrough of Codeless in action:
 
+[![Watch the demo](https://img.youtube.com/vi/your_video_id_here/0.jpg)](https://www.youtube.com/watch?v=your_video_id_here)
 
+> _Click the image above or [view the demo on YouTube](https://www.youtube.com/watch?v=your_video_id_here)._  
+> _(Replace the link with your actual demo video when available.)_
 
+---
 
-
-
-
-## Contributors
+## 📧 Contact
 
 - **Som Prasad** - Developer & Maintainer
 - **somprasad240@gmail.com** - For any inquiries or suggestions, feel free to reach out
 - **Open to Contributions!** Feel free to fork and submit pull requests.
-
-
-
-
-# CodeLess
-
-## Overview
-
-Codeless is a powerful AI-driven no-code/low-code platform that enables seamless collaborative software development. It allows users to create, manage, and deploy projects efficiently while leveraging real-time collaboration and AI-powered automation.
-
-## Deployed
-https://codeless.live
-
-## Features
-
-- **Live Collaboration:** Users can edit and manage projects in real time.
-- **WebSockets Integration:** Ensures instant updates and seamless interaction.
-- **Secure API Communication:** Uses JWT authentication for secure access.
-- **Customizable Components:** Provides reusable UI components for faster development.
-- **Built-in Deployment:** Allows easy project hosting and management.
-- **AI-Powered Assistance** Get intelligent code suggestions, auto-completions, and debugging insights.
-
-## Tech Stack
-
-- **Frontend:** React, Vite, TailwindCSS, Material-UI, React Icons
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB (via Mongoose ORM)
-- **Authentication:** JWT-based authentication
-- **Real-time Communication:** WebSockets (Socket.io)
-- **Server & Deployment:** Nginx, PM2 for process management
-- **Cloud Storage** AWS S3
-- **Caching & Optimization** Redis for fast data access
-
-
-## Backend
-
-### File Structure
-```
-📂 Backend
-│── 📄 .env
-│── 📄 .gitignore
-│── 📄 app.js
-│── 📄 package.json
-│── 📄 server.js
-│
-├── 📂 Controllers
-│   ├── 📄 ai.controller.js
-│   ├── 📄 cloud.controller.js
-│   ├── 📄 project.controller.js
-│   ├── 📄 user.controller.js
-│
-├── 📂 Db
-│   ├── 📄 db.js
-│
-├── 📂 Middleware
-│   ├── 📄 auth.middleware.js
-│
-├── 📂 Models
-│   ├── 📄 project.model.js
-│   ├── 📄 user.model.js
-│
-├── 📂 Routes
-│   ├── 📄 ai.routes.js
-│   ├── 📄 cloud.routes.js
-│   ├── 📄 project.routes.js
-│   ├── 📄 user.routes.js
-│
-├── 📂 Services
-│   ├── 📄 ai.service.js
-│   ├── 📄 cloud.service.js
-│   ├── 📄 project.service.js
-│   ├── 📄 redis.service.js
-│   ├── 📄 user.service.js
-```
-
-## Environment Variables
-
-The following environment variables need to be set for the backend to function correctly:
-
-| Variable Name      | Description                          |
-|--------------------|--------------------------------------|
-| `MONGO_URI`       | MongoDB connection string           |
-| `JWT_SECRET`      | Secret key for JWT authentication   |
-| `AWS_ACCESS_KEY`  | AWS access key for S3               |
-| `AWS_SECRET_KEY`  | AWS secret key for S3               |
-| `AWS_BUCKET_NAME` | AWS S3 bucket name                  |
-| `GOOGLE_AI_KEY`   | Google AI API key                   |
-| `REDIS_HOST`      | Redis server host                   |
-| `REDIS_PORT`      | Redis server port                   |
-| `REDIS_PASSWORD`  | Redis server password               |
-
-Make sure to configure these variables in your `.env` file before running the project.
-
-## Frontend
-
-### File Structure
-
-Frontend File Structure:
-```
-📂 public
-│   📄 favicon.ico
-│   📄 index.html
-│   📄 robots.txt
-📂 src
-│   📂 components
-│   │   📄 Chat.jsx
-│   │   📄 Home.jsx
-│   │   └── ...
-│   📂 context
-│   │   📄 user.context.js
-│   📂 config
-│   │   📄 socket.js
-│   📄 App.jsx
-│   📄 index.css
-│   📄 main.jsx
-│   └── ...
-📄 .gitignore
-📄 package.json
-📄 README.md
-📄 vite.config.js
-```
-## Installation
-
-### Prerequisites
-
-- Node.js
-- MongoDB
-
-### Steps
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-repo/codeless.git
-   cd Backend
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory and configure in both Backend and Frontend
-
-4. **Run the server:**
-   ```bash
-   npm server.js
-   ```
-5. **Run the frontend:**
-   ```bash
-   cd Frontend
-   npm install
-   npm run dev
-   ```
-
-## Screenshots
-
-### Homepage
-![codeless live_](https://github.com/user-attachments/assets/f402ef24-259b-4230-8c11-2822d97a1655)
-
-### Project Dashboard
-![codeless live_home](https://github.com/user-attachments/assets/247434c7-5107-4328-966a-2d88082f1abd)
-
-### Chat Room
-![codeless live_home (1)](https://github.com/user-attachments/assets/83c0c94d-fb51-4673-81fc-86fbb9fe1d70)
-![codeless live_chat_67b9cbb8c5f3b7ac44aa879b](https://github.com/user-attachments/assets/ddf3acdf-6f18-4f8d-9fbf-33a576e2f639)
-![codeless live_chat_67b9cbb8c5f3b7ac44aa879b (1)](https://github.com/user-attachments/assets/fd33aacd-0cf9-431d-aa1f-e52d5968bc3e)
-
-### Login
-![codeless live_login](https://github.com/user-attachments/assets/8c9e0c50-f192-46c3-9331-bf4fa050df23)
-
-### Register
-![codeless live_register](https://github.com/user-attachments/assets/17f776fe-50e8-4df1-8cf8-1afc97b000a2)
-
-
-
-
-
-
-
-
-
-## Contributors
-
-- **Som Prasad** - Developer & Maintainer
-- **somprasad240@gmail.com** - For any inquiries or suggestions, feel free to reach out
-- **Open to Contributions!** Feel free to fork and submit pull requests.
-
-
