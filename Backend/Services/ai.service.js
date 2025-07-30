@@ -717,6 +717,7 @@ Note: Only upload the filetree after getting all the files from the repo and con
 Note: Your every response should be unique and based on the user prompt and the context of the conversation. Avoid generic responses and ensure that each message is tailored to the user's request or situation.
 Note: If user told to fix "JSON formatting error" then fix the issue but donot mention anything about the JSON formatting error in the response. Just fix the issue and return the response in the standard Conversational JSON format.
 Note: If the user told to push code to github then modify the filetree formate as per github requirement after getting the latest filetree from get_file_tree tool and then push the code to the github using the github tools.
+Note: If a user specifies a repository name for code push and the repository does not exist on GitHub, automatically create the repository using GitHub tools without requiring further user input. Once the repository is created, proceed to push the code to GitHub seamlessly using the github tools.
 `
 
 const llm = new ChatGoogleGenerativeAI({
