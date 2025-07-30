@@ -123,10 +123,10 @@ The application should now be running and accessible at `http://localhost`.
 
 Watch a quick walkthrough of Codeless in action:
 
-[![Watch the demo](https://img.youtube.com/vi/your_video_id_here/0.jpg)](https://www.youtube.com/watch?v=your_video_id_here)
+[![Watch the Demo](https://img.youtube.com/vi/XcDlINGzFRI/maxresdefault.jpg)](https://youtu.be/XcDlINGzFRI)
 
-> _Click the image above or [view the demo on YouTube](https://www.youtube.com/watch?v=your_video_id_here)._  
-> _(Replace the link with your actual demo video when available.)_
+> _Click the image above
+
 
 ---
 
